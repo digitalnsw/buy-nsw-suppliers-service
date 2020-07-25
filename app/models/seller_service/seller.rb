@@ -343,7 +343,7 @@ module SellerService
       update_waiting_seller
       draft_version.update_attributes!(submitted_by_id: user.id, submitted_at: Time.now)
       draft_version.submit!
-      ::SlackPostJob.perform_later(
+      ::SharedModules::SlackPostJob.perform_later(
         pending_version.id,
         :seller_version_submitted.to_s
       )

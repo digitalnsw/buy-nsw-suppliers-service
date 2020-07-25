@@ -1,0 +1,256 @@
+en:
+  buyers:
+    applications:
+      messages:
+        manager_approve_success: Thanks for approving this application.
+        manager_approve_failure: There was a problem approving this application. Please contact the support team for help.
+        changes_saved: Your changes have been saved
+        changes_saved_with_errors: Your changes have been saved. However there were some errors.
+      steps:
+        basic_details:
+          long: 'Apply to become a buyer'
+          name:
+            label: Full name
+            review: Name
+          organisation:
+            label: Organisation name
+            hint: Please enter in full, for example Department of Premier and Cabinet, not DPC.
+            review: Organisation
+        email_approval:
+          long: 'About you and buy.nsw'
+          application_body:
+            label: In a few sentences, please tell us how you plan to use buy.nsw.
+            review: Planned use
+          cloud_purchase:
+            label: Are you considering a cloud purchase soon?    
+            review: Purchase timeline     
+          contactable:
+            label: "Can we phone you to welcome you to buy.nsw and learn a little more about your needs? "
+            review: "Welcome call" 
+          contact_number:
+            label: "Please enter your best contact number. We’ll only use it for this initial welcome call. "
+            error_label: Your best contact number is required.
+            review: Contact number
+        manager_approval:
+          long: 'Approval from your line manager'
+          review: Manager's email
+          manager_name:
+            label: "Your manager's full name"
+          manager_email:
+            label: "Your manager's email"
+        employment_status:
+          long: 'Your employment status'
+          review: Employment status
+          employment_status:
+            label: "To create a buyer account you need to be:"
+            hint_html: |
+              <ul>
+                <li>a government employee</li>
+                <li>authorised by a government employee</li>
+                <li>an employee an organisation <a href="https://www.procurepoint.nsw.gov.au/before-you-buy/buyer-eligibility-and-registration">registered as an eligible buyer</a></li>
+              </ul>
+        review:
+          title: 'Review your details'
+          intro_html: |
+            <p>Please check the details below before submitting your application.</p>
+    dashboard:
+      actions:
+        label: Account actions
+        change_account: Change your email address or password
+        contact_support: Contact support
+      status:
+        good_standing: Your buyer account is active.
+        awaiting_review_title: Your buyer application is now being reviewed
+        awaiting_review_message_html: |
+          <p>We'll be in touch by email soon with the outcome of your application.</p>
+          <p>In the meantime, you can %{contact_us_link} if you have any questions.</p>
+        awaiting_review_contact_us_label: contact us
+        rejected_title: Your buyer application has been rejected
+        rejected_message_html: |
+          <p>After a careful review, we decided your application doesn’t quite fit the <strong>buy.nsw</strong> community.</p>
+          <p>Please %{contact_us_link} if you have any questions.</p>
+        rejected_contact_us_label: contact us
+      title: Your buyer account
+    product_orders:
+      intro_html: |
+        <p><strong>buy.nsw</strong> will help you through the ordering process. In order
+        to tailor our help to you we need to ask you a few more questions.</p>
+        <p>A member of our team will then contact you to help finalise the order.</p>
+      estimated_contract_value:
+        label: What is the approximate value of the contract, excluding GST?
+        hint: Please enter numbers only, for example 100000 not $100,000.
+      contacted_seller:
+        label: Have you contacted the seller about your intention to buy?
+      purchased_cloud_before:
+        label: Have you bought or been involved with buying cloud products before?
+  time:
+    formats:
+      simple_date: '%-d %B %Y'
+  devise:
+    failure:
+      unauthenticated: "Please sign in or create an account to continue."
+  enumerize:
+    buyer_application:
+      cloud_purchase:
+        make-purchase: "Yes, we’re currently looking to make a cloud purchase."
+        plan-purchase: "Yes, we’re planning a cloud purchase in the next six months."
+        no-plan: "We’re not currently planning a cloud purchase."
+      contactable:
+        phone-number: "Yes."
+        email: "I'd prefer email."
+        none: "No thanks."
+      employment_status:
+        employee: "I'm a NSW Government employee and need access to buy.nsw to perform my role."
+        contractor: "I'm a contractor working in state or local government."
+        other-eligible: "I'm an employee of another organisation that has registered as an eligible buyer."
+    document:
+      scan_status:
+        unscanned: Awaiting virus scan
+        infected: Infected file, cannot download
+  errors:
+    addresses_present?: Give at least one address
+    any_checked?: Please select at least one option
+    currency?: Enter a three-letter currency code (eg. AUD)
+    file?: Please upload a file
+    file_uploaded?: Please upload a file
+    filled?: Please answer this question
+    in_future?: Please enter a date in the future
+    max_size?: "Please choose no more than %{num} options"
+    one_of?: ''
+    in_list?: ''
+    same_password?: Please enter the same password
+    max_word_count?: exceeds the word count
+    max_items?: You have entered too many items
+    number?: Please enter a number only - no symbols, spaces or commas.
+    no_cloud_products?: Please remove all your cloud products from your application first
+    abn?: Please enter a valid ABN
+    unique_abn?: This ABN has already been used on another application. Please contact us so that we can help you resolve this.
+    email?: Please enter a valid email address
+    url?: Please enter a valid web address
+    offers_cloud?: At present, you must offer cloud products or support to join buy.nsw.
+    true?: Please check the box
+    waiting_seller_not_existing_user?: An account already exists for this email address, they may have already been invited
+    waiting_seller_unique_contact_email?: A seller with this email address is already on the waitlist
+    waiting_seller_not_existing_seller_abn?: A seller application has already been started with this ABN, they may have already been invited
+    waiting_seller_unique_abn?: A seller with this ABN is already on the waitlist
+    messages:
+      weak_password: "That's not strong enough. You must use a strong unique password for your account. Try a longer password with multiple random words – it's more secure and easier to remember."
+  feedback:
+    problem_report:
+      label: Is there anything wrong with this page?
+      title: Help us improve buy.nsw
+      task: What were you doing?
+      issue: What went wrong?
+      action: Send feedback
+      messages:
+        success: Thank you for your feedback.
+        error: Sorry, we’re unable to receive your message right now. If the problem persists, we have other ways for you to provide feedback on the contact page.
+        invalid: Please fill in the form
+  helpers:
+    label:
+      seller_application:
+        decision:
+          approve: Approve this application
+          reject: Reject this application
+          changes_requested: Return this application to the seller for changes
+        response: Feedback (shared with applicant)
+  shared:
+    errors:
+      title_with_error_list: "There was a problem with your answers to:"
+      title_without_error_list: There was a problem with your answers
+      guidance: "Please check the answers you provided."
+  static:
+    cloud:
+      meta_description: Australia's first government marketplace for cloud products and services, where businesses of all sizes sell to NSW Government, not-for-profits and community groups.
+  users:
+    sessions:
+      sign_up:
+        title: Create an account
+        buyers:
+          title: Buyers
+          body_html: |
+            <p>You can create buyer account if you're a NSW Government employee or an employee of <a href="https://www.procurepoint.nsw.gov.au/before-you-buy/buyer-eligibility-and-registration">another eligible organisation<a>.</p>
+          button_label: Create a buyer account
+        sellers:
+          title: Sellers
+          body_html: |
+            <p>Register for a seller account if you're an organisation looking to sell your products and services to government.</p>
+          button_label: Create a seller account
+      sign_in:
+        title: Already have an account?
+        help:
+          body_html: |
+            <p>Get help if you have %{forgotten_password} or if you %{confirmation_email}.</p>
+          forgotten_password_label: forgotten your password
+          confirmation_email_label: haven't received a confirmation email
+        form:
+          email_label: Email address
+          password_label: Password
+          remember_me_label: Remember me
+          submit_label: Sign in
+    registrations:
+      buyer:
+        title: Create a buyer account
+        body_html: |
+          <p>Already have an account? %{sign_in}.</p>
+        sign_in_label: Sign in
+        form:
+          email_help: If you have one, use your government email address. We'll send an email to this address to verify it's yours.
+      seller:
+        title: Create a seller account
+        body_html: |
+          <p>Once you've verified your details, you'll be able to start your seller application.</p>
+          <p>Already have an account? %{sign_in}.</p>
+        sign_in_label: Sign in
+        form:
+          email_help: Please use your work email address. We'll send an email to this address to verify it's yours.
+      shared:
+        form:
+          email_label: Email address
+          password_label: Password
+          password_help: "Passwords must be at least 8 characters long. Tip: create a password with 3 or more words – it's secure and easy to remember."
+          password_confirmation_label: Confirm your password
+          submit_label: Continue
+        confirm:
+          title: Confirm your email address
+          body_html: |
+            <p>We've sent a one-time link to <strong>%{email}</strong>.<br>
+            Please click the link to verify your email address and continue your registration.</p>
+          resend_html: If you don't receive a link, you can %{resend_action}.
+          resend_label: request we send it again
+      edit:
+        email:
+          label: Your email address
+        password:
+          label: Your new password
+          hint_html: |
+            Leave blank if you don't want to change it. <br>
+            Passwords must be at least 8 characters long. Tip: create a password with 3 or more words – it's secure and easy to remember.
+        password_confirmation:
+          label: Confirm your new password
+        current_password:
+          label: Enter your current password
+          hint: We need this to confirm your changes
+  events:
+    messages:
+      submitted_application: Submitted application
+      manager_approved: Manager %{name} (%{email}) approved the buyer
+      started_application: Started application
+      assigned_application: Assigned application to %{email}
+      approved_application: "Approved application. Response: %{note}"
+      rejected_application: "Rejected application. Response: %{note}"
+      returned_application: "Returned application to seller. Response: %{note}"
+      note: "Note added: %{note}"
+  slack_messages:
+    new_product_order:
+      text: "%{buyer} from %{organisation} wants to buy %{product}. :moneyBag: :tada:"
+      button: View product order
+    buyer_application_submitted:
+      text: "%{buyer} from %{organisation} just submitted an application to become a buyer. :saxophone: :tada:"
+      button: Review application
+    seller_version_submitted:
+      text: "%{seller} just submitted an application to become a seller. :rainbow: :tada:"
+      button: Review application
+    new_problem_report:
+      text: "A new problem was reported :mega: :speech_balloon:"
+      button: "View problem report"

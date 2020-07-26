@@ -11,15 +11,16 @@ module SellerService
       ]
 
       @warning_times = opts[:warning_times] || [
-        8.weeks,
+#      8.weeks,
         4.weeks,
-        2.weeks,
+#      2.weeks,
         1.weeks,
-        2.days,
-        1.days,
+#      2.days,
+#      1.days,
       ]
 
       @seller_version = opts[:seller_version]
+      raise "Seller Version is nil!" if @seller_version.nil?
     end
 
     def expiring_or_expired_documents

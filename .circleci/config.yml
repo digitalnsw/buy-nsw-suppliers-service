@@ -1,24 +1,15 @@
-# Ruby CircleCI 2.1 configuration file
 version: 2.1
+orbs:
+  ruby: circleci/ruby@0.1.2 
+
 jobs:
-  test_and_tag:
+  build:
     docker:
-       - image: circleci/ruby:2.6.6-node-browsers
-
-    working_directory: ~/repo
-
+      - image: circleci/ruby:2.6.3-stretch-node
+    executor: ruby/default
     steps:
       - checkout
       - run:
-          name: tag successful build
-          command: |
-            git config --global user.name "CircleCI tagging robot"
-            export TAG=v$CIRCLE_BUILD_NUM
-            git tag -a $TAG -m 'adding version tag'
-            git push origin $TAG
-
-workflows:
-  version: 2.1
-  test_and_tag:
-    jobs:
-      - test_and_tag
+          name: Which bundler?
+          command: bundle -v
+      - ruby/bundle-install

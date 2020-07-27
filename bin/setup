@@ -16,8 +16,9 @@ chdir APP_ROOT do
   system('bundle check') || system!('bundle install')
 
   puts 'Logs'
-  puts Rails.env
-  puts ENV['DATABASE_URL']
+  puts 'rails env:', ENV['RAILS_ENV']
+  puts 'rack env:', ENV['RACK_ENV']
+  puts 'database url:', ENV['DATABASE_URL']
   puts 'End logs'
 
   puts "\n== Preparing database =="

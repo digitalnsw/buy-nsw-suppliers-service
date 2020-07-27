@@ -2,9 +2,8 @@ development:
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS", 4).to_i + 1 %>
-  url: <%= ENV['DATABASE_URL'] %>
+  url: <%= ENV['DATABASE_URL'] %><%= ENV['TEST_ENV_NUMBER'] %>
 
-# This is for the benefit of the AWS spike
 test:
   adapter: postgresql
   encoding: unicode

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_08_051506) do
+ActiveRecord::Schema.define(version: 2020_06_17_052258) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -57,6 +57,7 @@ ActiveRecord::Schema.define(version: 2020_04_08_051506) do
     t.bigint "uploaded_by_id"
     t.boolean "public", default: false, null: false
     t.bigint "seller_id"
+    t.string "after_scan"
     t.index ["seller_id"], name: "index_documents_on_seller_id"
     t.index ["uploaded_by_id"], name: "index_documents_on_uploaded_by_id"
   end
@@ -65,6 +66,26 @@ ActiveRecord::Schema.define(version: 2020_04_08_051506) do
     t.json "body"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "email_stats", force: :cascade do |t|
+    t.string "notification_type", null: false
+    t.string "subject"
+    t.json "destination"
+    t.json "sent_to"
+    t.datetime "sent_at"
+    t.datetime "notified_at"
+    t.string "recipient", null: false
+    t.string "bounce_type"
+    t.string "bounce_sub_type"
+    t.string "bounce_diagnostic_code"
+    t.bigint "notification_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["notification_id"], name: "index_email_stats_on_notification_id"
+    t.index ["notified_at"], name: "index_email_stats_on_notified_at"
+    t.index ["recipient", "notification_id"], name: "index_email_stats_on_recipient_and_notification_id", unique: true
+    t.index ["recipient"], name: "index_email_stats_on_recipient"
   end
 
   create_table "event_service_events", force: :cascade do |t|
@@ -552,6 +573,9 @@ ActiveRecord::Schema.define(version: 2020_04_08_051506) do
     t.text "roles", default: [], array: true
     t.integer "seller_id"
     t.datetime "discarded_at"
+    t.datetime "last_failed_at"
+    t.integer "failed_count"
+    t.string "full_name"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true

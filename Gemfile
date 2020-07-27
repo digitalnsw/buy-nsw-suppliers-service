@@ -21,9 +21,6 @@ group :test do
   gem 'paranoia', '~> 2.2'
   gem 'pretender'
   gem 'rails', '~> 5.2.4'
-  gem 'reform'
-  gem 'reform-rails', '~> 0.1.7'
-
 
   gem 'capybara', '~> 3.14.0'
   gem 'capybara-selenium'

@@ -19,6 +19,7 @@ chdir APP_ROOT do
   puts 'rails env:', ENV['RAILS_ENV']
   puts 'rack env:', ENV['RACK_ENV']
   puts 'database url:', ENV['DATABASE_URL']
+  puts 'test database url:', ENV['TEST_DATABASE_URL']
   puts 'End logs'
 
   puts "\n== Preparing database =="

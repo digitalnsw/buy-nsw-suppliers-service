@@ -15,13 +15,6 @@ chdir APP_ROOT do
   system! 'gem install bundler --conservative'
   system('bundle check') || system!('bundle install')
 
-  puts 'Logs'
-  puts 'rails env:', ENV['RAILS_ENV']
-  puts 'rack env:', ENV['RACK_ENV']
-  puts 'database url:', ENV['DATABASE_URL']
-  puts 'test database url:', ENV['TEST_DATABASE_URL']
-  puts 'End logs'
-
   puts "\n== Preparing database =="
   system! 'bin/rails db:setup'
 

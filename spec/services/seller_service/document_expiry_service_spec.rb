@@ -16,7 +16,6 @@ RSpec.describe SellerService::DocumentExpiryService do
     it 'returns the expiry dates for the documents' do
       expect(subject.expiring_or_expired_documents).to eq({
         financial_statement: 4.weeks,
-        workers_compensation_certificate: 5.weeks,
         product_liability_certificate: 0.days,
       })
     end
@@ -42,7 +41,6 @@ RSpec.describe SellerService::DocumentExpiryService do
     it 'returns the hash or expiring or expired documents' do
       expect(subject.documents_serializable).to eq([
         { name: 'financial_statement', expiry: '28 days' },
-        { name: 'workers_compensation_certificate', expiry: '35 days' },
         { name: 'product_liability_certificate', expiry: 'Now expired' },
       ])
     end

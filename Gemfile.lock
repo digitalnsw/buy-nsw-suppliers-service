@@ -1,5 +1,7 @@
-PATH
-  remote: ../shared_libraries
+GIT
+  remote: https://github.com/digitalnsw/buy-nsw-shared-libraries
+  revision: 150d46313eda7c4313368f5220661e977505d83f
+  tag: v3
   specs:
     shared_libraries (0.0.1)
       activeresource (~> 5.1.0)

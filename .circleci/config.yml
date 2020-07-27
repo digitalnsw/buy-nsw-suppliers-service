@@ -7,7 +7,7 @@ jobs:
          environment:
            TEST_DATABASE_URL: postgresql://localhost/nsw_procure_test
 
-       - image: circleci/ruby:2.6.6-node-browsers
+       - image: circleci/postgres:10.6-alpine-ram
          environment:
            POSTGRES_USER: circleci
            POSTGRES_DB: nsw_procure_test

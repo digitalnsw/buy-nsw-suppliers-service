@@ -67,7 +67,7 @@ module SellerService
 
     def index
       if params[:current]
-        raise SharedModules::MethodNotAllowed unless session_user.is_seller?
+        raise SharedModules::MethodNotAllowed unless session_user&.is_seller?
         @seller = SellerService::Seller.where(id: session_user.seller_id).first
         render json: serializer.show
       else
@@ -84,7 +84,7 @@ module SellerService
     end
 
     def level_2_services
-      render json: @seller.latest_version.level_2_services
+      render json: @seller&.latest_version.level_2_services
     end
 
     def run_operation(operation)

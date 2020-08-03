@@ -53,7 +53,7 @@ module SellerService
     end
 
     def set_seller
-      raise SharedModules::MethodNotAllowed unless session_user.is_seller? && session_user.seller_id
+      raise SharedModules::MethodNotAllowed unless session_user&.is_seller? && session_user.seller_id
       @seller = SellerService::Seller.where(id: session_user.seller_id).first
       raise SharedModules::MethodNotAllowed unless @seller
     end

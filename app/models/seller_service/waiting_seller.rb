@@ -71,6 +71,7 @@ module SellerService
           contact_last_name: contact_name.partition(' ').last,
           contact_phone: contact_phone,
           contact_email: contact_email,
+          contact_position: contact_position,
           representative_first_name: contact_name.partition(' ').first,
           representative_last_name: contact_name.partition(' ').last,
           representative_phone: contact_phone,

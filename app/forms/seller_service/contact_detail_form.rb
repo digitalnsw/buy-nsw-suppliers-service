@@ -4,6 +4,7 @@ module SellerService
     field :contact_last_name
     field :contact_email
     field :contact_phone
+    field :contact_position
 
     field :representative_first_name
     field :representative_last_name
@@ -21,6 +22,7 @@ module SellerService
     validates :contact_last_name, format: { with: /\A[A-Za-z .'\-]+\z/ }
     validates :contact_email, format: { with: URI::MailTo::EMAIL_REGEXP }
     validates :contact_phone, format: { with: /\A(\+)?[0-9 ()\-]{3,20}\z/ }
+    validates :contact_position, format: { with: /\A[A-Za-z .'\-]+\z/ }
     validates :representative_first_name, format: { with: /\A[A-Za-z .'\-]+\z/ }
     validates :representative_last_name, format: { with: /\A[A-Za-z .'\-]+\z/ }
     validates :representative_email, format: { with: URI::MailTo::EMAIL_REGEXP }
@@ -83,6 +85,7 @@ module SellerService
         self.representative_last_name = self.contact_last_name
         self.representative_email = self.contact_email
         self.representative_phone = self.contact_phone
+        self.representative_position = self.contact_position
       end
       country = addresses.present? && addresses.first['country'].upcase
       self.regional = false unless postcode_in_regional_range && country == 'AU'
@@ -94,6 +97,7 @@ module SellerService
         :contact_last_name,
         :contact_email,
         :contact_phone,
+        :contact_position,
         :representative_first_name,
         :representative_last_name,
         :representative_email,

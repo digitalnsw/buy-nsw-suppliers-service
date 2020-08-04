@@ -53,6 +53,7 @@ module SellerService
           "contact_last_name",
           "contact_phone",
           "contact_email",
+          "contact_position",
         ))
       end
 

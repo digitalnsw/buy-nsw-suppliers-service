@@ -46,6 +46,7 @@ module SellerService
         contact_last_name 'Sellerton'
         contact_email 'seller@example.org'
         contact_phone '02 9123 4567'
+        contact_position 'Signer'
 
         representative_first_name 'Signy'
         representative_last_name 'Signerton'

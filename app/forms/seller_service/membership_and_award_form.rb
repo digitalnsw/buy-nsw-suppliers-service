@@ -3,8 +3,8 @@ module SellerService
     field :awards, type: :json
     field :engagements, type: :json
 
-    validates :awards, 'seller_service/json': { schema: ['limited?'] }
-    validates :engagements, 'seller_service/json': { schema: ['limited?'] }
+    validates :awards, 'shared_modules/json': { schema: ['limited?'] }
+    validates :engagements, 'shared_modules/json': { schema: ['limited?'] }
 
     def after_load
       self.awards ||= []

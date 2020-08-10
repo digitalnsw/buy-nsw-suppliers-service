@@ -21,9 +21,9 @@ module SellerService::Account
       errors.add(:workers_compensation_certificate_expiry, "Expiry date passed") if workers_compensation_certificate_expiry.present? && workers_compensation_certificate_expiry < Date.today
     end
 
-    validates :professional_indemnity_certificate_ids, 'seller_service/json': { schema: ['document'] }
-    validates :product_liability_certificate_ids, 'seller_service/json': { schema: ['document'] }
-    validates :workers_compensation_certificate_ids, 'seller_service/json': { schema: ['document'] }
+    validates :professional_indemnity_certificate_ids, 'shared_modules/json': { schema: ['document'] }
+    validates :product_liability_certificate_ids, 'shared_modules/json': { schema: ['document'] }
+    validates :workers_compensation_certificate_ids, 'shared_modules/json': { schema: ['document'] }
 
     def after_load
       self.professional_indemnity_certificate_ids ||= []

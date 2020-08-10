@@ -6,7 +6,7 @@ group :test do
   gem 'dotenv-rails'
   gem 'pg'
   gem 'pg_search'
-  gem 'shared_libraries', git: 'https://github.com/digitalnsw/buy-nsw-shared-libraries', tag: 'v3'
+  gem 'shared_libraries', git: 'https://github.com/digitalnsw/buy-nsw-shared-libraries', tag: 'v6'
 
   gem 'abn'
   gem 'aasm'

@@ -8,12 +8,12 @@ module SellerService::Profile
     field :awards, type: :json
     field :engagements, type: :json
 
-    validates :accreditations, 'seller_service/json': { schema: ['limited?'] }
-    validates :accreditation_document_ids, 'seller_service/json': { schema: ['document'] }
-    validates :licenses, 'seller_service/json': { schema: ['limited?'] }
-    validates :license_document_ids, 'seller_service/json': { schema: ['document'] }
-    validates :awards, 'seller_service/json': { schema: ['limited?'] }
-    validates :engagements, 'seller_service/json': { schema: ['limited?'] }
+    validates :accreditations, 'shared_modules/json': { schema: ['limited?'] }
+    validates :accreditation_document_ids, 'shared_modules/json': { schema: ['document'] }
+    validates :licenses, 'shared_modules/json': { schema: ['limited?'] }
+    validates :license_document_ids, 'shared_modules/json': { schema: ['document'] }
+    validates :awards, 'shared_modules/json': { schema: ['limited?'] }
+    validates :engagements, 'shared_modules/json': { schema: ['limited?'] }
 
     validates_presence_of :accreditation_document_ids, if: -> {
       accreditations.present? && accreditations.select(&:present?).present?

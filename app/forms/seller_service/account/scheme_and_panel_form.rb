@@ -1,7 +1,7 @@
 module SellerService::Account
   class SchemeAndPanelForm < SellerService::Account::AuditableForm
     field :schemes_and_panels, type: :json
-    validates :schemes_and_panels, 'seller_service/json': { schema: [SellerService::SupplierScheme.all.map(&:id).to_set] }
+    validates :schemes_and_panels, 'shared_modules/json': { schema: [SellerService::SupplierScheme.all.map(&:id).to_set] }
 
     field :all_schemes, type: :json, usage: :front_end
 

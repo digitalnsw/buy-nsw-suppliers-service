@@ -8,7 +8,7 @@ module SellerService::Account
 
     #TODO: Validate the financial_statement_expiry is not past
     validates :financial_statement_expiry, presence: true, if: -> { financial_statement_ids.present? }
-    validates :financial_statement_ids, 'seller_service/json': { schema: ['document'] }
+    validates :financial_statement_ids, 'shared_modules/json': { schema: ['document'] }
 
     def after_load
       self.financial_statement_ids ||= []

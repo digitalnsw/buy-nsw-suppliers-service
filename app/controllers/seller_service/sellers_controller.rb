@@ -39,7 +39,7 @@ module SellerService
     end
 
     def steps
-      raise SharedModules::MethodNotAllowed unless session_user.is_seller? && session_user.seller_id
+      raise SharedModules::MethodNotAllowed unless session_user&.is_seller? && session_user&.seller_id
       seller = SellerService::Seller.where(id: session_user.seller_id).first
       raise SharedModules::MethodNotAllowed if params[:account] && !seller.live?
       forms = params[:account] ? SellerService::Seller.account_forms : SellerService::Seller.forms

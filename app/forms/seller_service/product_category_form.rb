@@ -2,7 +2,7 @@ module SellerService
   class ProductCategoryForm < SellerService::AuditableForm
     field :services, type: :json
     validates_presence_of :services
-    validates :services, 'seller_service/json': { schema: [
+    validates :services, 'shared_modules/json': { schema: [
       Set.new(SellerService::SellerVersion.all_services)
     ] }
     # validate :no_more_than_5_level_2_services

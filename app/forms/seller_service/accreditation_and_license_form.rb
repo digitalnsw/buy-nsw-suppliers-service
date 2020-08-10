@@ -6,10 +6,10 @@ module SellerService
     field :licenses, type: :json
     field :license_document_ids, type: :json
 
-    validates :accreditations, 'seller_service/json': { schema: ['limited?'] }
-    validates :accreditation_document_ids, 'seller_service/json': { schema: ['document'] }
-    validates :licenses, 'seller_service/json': { schema: ['limited?'] }
-    validates :license_document_ids, 'seller_service/json': { schema: ['document'] }
+    validates :accreditations, 'shared_modules/json': { schema: ['limited?'] }
+    validates :accreditation_document_ids, 'shared_modules/json': { schema: ['document'] }
+    validates :licenses, 'shared_modules/json': { schema: ['limited?'] }
+    validates :license_document_ids, 'shared_modules/json': { schema: ['document'] }
 
     validates_presence_of :accreditation_document_ids, if: -> {
       accreditations.present? && accreditations.select(&:present?).present?

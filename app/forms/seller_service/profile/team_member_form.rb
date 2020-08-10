@@ -2,7 +2,7 @@ module SellerService::Profile
   class TeamMemberForm < SellerService::BaseForm
     field :team_members, type: :json
 
-    validates :team_members, 'seller_service/json': { schema:
+    validates :team_members, 'shared_modules/json': { schema:
       [
         {
           avatar_id: 'avatar?',

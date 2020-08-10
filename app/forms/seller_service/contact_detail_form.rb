@@ -29,7 +29,7 @@ module SellerService
     validates :representative_phone, format: { with: /\A(\+)?[0-9 ()\-]{3,20}\z/ }
     validates :representative_position, format: { with: /\A[A-Za-z .'\-]+\z/ }
 
-    validates :addresses, 'seller_service/json': { schema:
+    validates :addresses, 'shared_modules/json': { schema:
       [
         {
           address: 'limited',

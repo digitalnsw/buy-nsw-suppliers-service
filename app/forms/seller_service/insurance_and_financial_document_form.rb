@@ -25,10 +25,10 @@ module SellerService
     end
     validates :financial_statement_expiry, presence: true, if: -> { financial_statement_ids.present? }
 
-    validates :professional_indemnity_certificate_ids, 'seller_service/json': { schema: ['document'] }
-    validates :product_liability_certificate_ids, 'seller_service/json': { schema: ['document'] }
-    validates :workers_compensation_certificate_ids, 'seller_service/json': { schema: ['document'] }
-    validates :financial_statement_ids, 'seller_service/json': { schema: ['document'] }
+    validates :professional_indemnity_certificate_ids, 'shared_modules/json': { schema: ['document'] }
+    validates :product_liability_certificate_ids, 'shared_modules/json': { schema: ['document'] }
+    validates :workers_compensation_certificate_ids, 'shared_modules/json': { schema: ['document'] }
+    validates :financial_statement_ids, 'shared_modules/json': { schema: ['document'] }
 
     def optional?
       true

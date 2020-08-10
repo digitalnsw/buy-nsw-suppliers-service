@@ -5,7 +5,7 @@ module SellerService::Account
     field :regional
     field :corporate_structure
 
-    validates :addresses, 'seller_service/json': { schema:
+    validates :addresses, 'shared_modules/json': { schema:
       [
         {
           address: 'limited',

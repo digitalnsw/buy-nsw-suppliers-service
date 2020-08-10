@@ -2,7 +2,7 @@ module SellerService::Profile
   class GovernmentCredentialForm < SellerService::BaseForm
     field :government_credentials, type: :json
 
-    validates :government_credentials, 'seller_service/json': { schema:
+    validates :government_credentials, 'shared_modules/json': { schema:
       [
         {
           first_name: 'name',

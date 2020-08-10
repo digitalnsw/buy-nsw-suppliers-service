@@ -4,7 +4,7 @@ module SellerService::Profile
     field :references, type: :json
     field :case_studies, type: :json
 
-    validates :references, 'seller_service/json': { schema:
+    validates :references, 'shared_modules/json': { schema:
       [
         {
           first_name: 'name',
@@ -18,7 +18,7 @@ module SellerService::Profile
       ]
     }
 
-    validates :case_studies, 'seller_service/json': { schema:
+    validates :case_studies, 'shared_modules/json': { schema:
       [
         {
           document_id: 'document',

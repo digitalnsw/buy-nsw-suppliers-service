@@ -20,7 +20,7 @@ module SellerService::Account
 
     def abn_uniqueness
       if abn.present? && ABN.valid?(abn.gsub(/\s+/, "")) &&
-        SellerService::SellerVersion.where.not(seller_id: seller_id).where(abn: abn).exists?
+        SellerService::SellerVersion.where.not(seller_id: seller_id).where(state: [:pending, :approved], abn: abn).exists?
         errors.add(:abn, "This ABN is not unique, you or someone from your company may have already created an account with us.")
       end
     end

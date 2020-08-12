@@ -44,6 +44,24 @@ module SellerService
       may_mark_as_invited?
     end
 
+    def complete?
+      name.presetn? &&
+      abn.present? && ABN.valid?(abn)
+      state.in?(["nsw", "act", "nt", "qld", "sa", "tas", "vic", "wa", "outside_au"]) &&
+      country.in?(ISO3166::Country.translations.keys) &&
+      contact_email.present? &&
+      contact_name.present?
+    end
+
+    def prepare_invitation!
+      WaitingSeller.transaction do
+        seller.invitation_token = SecureRandom.hex(24)
+        seller.invited_at = Time.now
+        seller.mark_as_invited
+        seller.save!
+      end
+    end
+
     scope :in_invitation_state, ->(state) { where(invitation_state: state) }
 
     def create_seller!
@@ -141,7 +159,7 @@ module SellerService
     end
 
     def self.import xml_doc
-      list = xml_doc.css("resultset row").map do |row|
+      list = xml_doc.css("row").map do |row|
         fields = row.css("field").map do |field|
           [field['name'], field.inner_text]
         end.compact.to_h
@@ -168,7 +186,7 @@ module SellerService
       end
 
       taken_emails = User.all.map(&:email).to_set
-      taken_abns = SellerVersion.where.not(state: 'archived').map{|v|v.abn.to_s.gsub(' ','')}.uniq.compact.select(&:present?).to_set
+      taken_abns = SellerVersion.where(state: [:pending, :approved]).map{|v|v.abn.to_s.gsub(' ','')}.uniq.compact.select(&:present?).to_set
       invited_emails = WaitingSeller.all.map(&:contact_email).to_set
       invited_abns = WaitingSeller.all.map{|ws|ws.abn.gsub(' ','')}.to_set
 

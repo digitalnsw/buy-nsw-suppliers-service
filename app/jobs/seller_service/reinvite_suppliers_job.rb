@@ -4,12 +4,12 @@ module SellerService
       reinvited_to_join = 0
 
       # FIXME: User is used cross service
-      emails_taken = User.all.map(&:email).to_set
-      abns_taken = SellerVersion.where.not(state: 'archived').map(&:abn).to_set
+      taken_emails = User.all.map(&:email).to_set
+      taken_abns = SellerVersion.where(state: [:approved, :pending]).map(&:abn).to_set
 
       WaitingSeller.invited.each do |seller|
 
-        next if emails_taken.include?(seller.contact_email) || abns_taken.include?(seller.abn)
+        next if taken_emails.include?(seller.contact_email) || taken_abns.include?(seller.abn)
 
         d = (Date.today - seller.invited_at.to_date).to_i
         next if d <= 0 || d % 28 != 0

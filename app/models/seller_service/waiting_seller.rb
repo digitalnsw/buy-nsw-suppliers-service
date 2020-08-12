@@ -55,10 +55,10 @@ module SellerService
 
     def prepare_invitation!
       WaitingSeller.transaction do
-        seller.invitation_token = SecureRandom.hex(24)
-        seller.invited_at = Time.now
-        seller.mark_as_invited
-        seller.save!
+        self.invitation_token = SecureRandom.hex(24)
+        self.invited_at = Time.now
+        mark_as_invited
+        save!
       end
     end
 

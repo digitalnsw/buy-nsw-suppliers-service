@@ -29,7 +29,7 @@ module SellerService
           @seller.versions.create!(state: :draft, name: '', started_at: Time.now)
         end
       end
-      update_session_attributes(seller_id: @seller.id, seller_status: @seller.status)
+      update_session_user(seller_id: @seller.id, seller_status: @seller.status)
 
       render json: serializer.show, status: :created, location: @seller, root: true
     end
@@ -90,7 +90,7 @@ module SellerService
     def run_operation(operation)
       set_seller
       @seller.run_action(operation, user: session_user)
-      update_session_attributes(seller_status: @seller.status)
+      update_session_user(seller_status: @seller.status)
       render json: { success: true }
     end
 

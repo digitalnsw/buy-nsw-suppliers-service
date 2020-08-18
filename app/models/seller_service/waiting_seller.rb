@@ -64,9 +64,9 @@ module SellerService
 
     scope :in_invitation_state, ->(state) { where(invitation_state: state) }
 
-    def create_seller!
+    def create_seller!(owner_id)
       SellerService::Seller.transaction do
-        seller = SellerService::Seller.create!
+        seller = SellerService::Seller.create!(owner_id: owner_id)
         num_emp_h = {
           "0-19" => '5to19',
           "20-100" => '50to99',
@@ -185,6 +185,7 @@ module SellerService
         })
       end
 
+      # FIXME move this to service
       taken_emails = User.all.map(&:email).to_set
       taken_abns = SellerVersion.where(state: [:pending, :approved]).map{|v|v.abn.to_s.gsub(' ','')}.uniq.compact.select(&:present?).to_set
       invited_emails = WaitingSeller.all.map(&:contact_email).to_set

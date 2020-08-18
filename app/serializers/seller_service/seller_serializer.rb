@@ -58,6 +58,7 @@ module SellerService
           canBeWithdrawn: seller.can_be_withdrawn?,
           lastProfileUpdate: profile&.updated_at&.strftime("%d %B %Y"),
           lastAccountUpdate: seller.latest_version&.updated_at&.strftime("%d %B %Y"),
+          owner_id: seller.owner_id,
           export_enc: @export_enc && seller.live? && bin2hex(blowfish(export_params(@user, seller.approved_version).to_json))
         })
       end

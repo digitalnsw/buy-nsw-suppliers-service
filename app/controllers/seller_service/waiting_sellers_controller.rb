@@ -13,6 +13,7 @@ module SellerService
       render json: {
         waiting_seller: {
           id: s.id,
+          contact_name: s.contact_name,
           email: s.contact_email,
           abn: s.abn,
           state: s.invitation_state,

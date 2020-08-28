@@ -38,8 +38,18 @@ module SellerService
           @seller_versions = scoped_seller_versions
         else
           page = (params[:page] || 1).to_i
-          @seller_versions = scoped_seller_versions.
-                     order(updated_at: :desc).
+
+          if params[:order] == 'AtoZ'
+            @seller_versions = scoped_seller_versions.order(:name)
+          elsif params[:order] == 'ZtoA'
+            @seller_versions = scoped_seller_versions.order(name: :desc)
+          else
+            @seller_versions = scoped_seller_versions.
+                     joins(seller: :last_profile_version).
+                     order('seller_profile_versions.updated_at' => :desc)
+          end
+
+          @seller_versions = @seller_versions.
                      offset( (page-1) * 10 ).
                      limit(10)
         end

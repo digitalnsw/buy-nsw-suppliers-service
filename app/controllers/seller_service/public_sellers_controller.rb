@@ -40,8 +40,8 @@ module SellerService
           page = (params[:page] || 1).to_i
           @seller_versions = scoped_seller_versions.
                      order(updated_at: :desc).
-                     offset( (page-1) * 25 ).
-                     limit(25)
+                     offset( (page-1) * 10 ).
+                     limit(10)
         end
         render json: serializer.index
       end

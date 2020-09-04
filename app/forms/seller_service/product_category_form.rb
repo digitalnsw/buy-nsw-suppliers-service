@@ -13,6 +13,11 @@ module SellerService
       end
     end
 
+    def level_1_services
+      self.services ||= []
+      @level_1_services ||= services.to_a & SellerService::SellerVersion.level_1_services
+    end
+
     def level_2_services
       self.services ||= []
       @level_2_services ||= services.to_a & SellerService::SellerVersion.level_2_services
@@ -24,7 +29,7 @@ module SellerService
     end
 
     def before_save
-      self.services = level_2_services + level_3_services
+      self.services = level_1_services + level_2_services + level_3_services
     end
   end
 end

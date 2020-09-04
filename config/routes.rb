@@ -25,6 +25,8 @@ SellerService::Engine.routes.draw do
   get 'seller_profile_forms', to: 'seller_profile_forms#index'
 
   resources :public_sellers, only: [:index, :show] do
+    get :sub_categories, on: :collection
+    get :top_categories, on: :collection
     get :count, on: :collection
     get :stats, on: :collection
   end

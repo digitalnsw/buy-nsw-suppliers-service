@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_17_233807) do
+ActiveRecord::Schema.define(version: 2020_08_26_204458) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -579,6 +579,7 @@ ActiveRecord::Schema.define(version: 2020_08_17_233807) do
     t.datetime "last_failed_at"
     t.integer "failed_count"
     t.string "full_name"
+    t.string "uuid"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true

@@ -29,16 +29,11 @@ module SellerService
 
     belongs_to :seller, class_name: "SellerService::Seller", inverse_of: :versions
 
-    # has_many :events, -> { order(created_at: :desc) }, as: :eventable, class_name: 'Event::Event', dependent: :destroy
-  
     belongs_to :next_version, class_name: 'SellerService::SellerVersion', optional: true, inverse_of: :previous_version
     has_one :previous_version, class_name: 'SellerService::SellerVersion', foreign_key: :next_version_id, inverse_of: :next_version
     has_many :profile_versions, through: :seller
     has_one :last_profile_version, through: :seller
 
-#    has_multi_documents :financial_statement, :professional_indemnity_certificate,
-#                  :workers_compensation_certificate,
-#                  :product_liability_certificate
 
     validates :started_at, presence: true
 
@@ -169,68 +164,113 @@ module SellerService
     enumerize :business_structure, in: ['sole-trader', 'company', 'partnership', 'trust']
     enumerize :annual_turnover, in: ['under-3m', '3m-10m', '10m-25m', '25m-50m', '50m-100m', 'over-100m']
 
-    # TODO: the list of allowed services should be same as self.all_sercices, but using that method here don't work
-    enumerize :services, multiple: true, in: [
-      'cloud-services',
-      'cloud-applications-and-software',
-      'cloud-hosting-and-infrastructure',
-      'cloud-support',
-      'software-development',
-      'digital-design',
-      'software-development-integration-and-implementation',
-      'mobile-applications-development',
-      'system-and-software-testing-uat-and-assurance',
-      'system-architecture',
-      'software-licensing',
-      'systems-and-operating-software',
-      'enterprise-and-platforms-software',
-      'productivity-software',
-      'databases-and-middleware',
-      'mobile-applications',
-      'specialised-software',
-      'network-and-security-software',
-      'end-user-computing',
-      'desktops-workstations-and-thin-clients',
-      'laptops-tablets-and-hybrids',
-      'printers-screens-and-monitors',
-      'peripherals-accessories-and-other-end-user-computing-products',
-      'end-user-computing-support',
-      'infrastructure',
-      'modems-and-routers',
-      'switches-servers-and-storage',
-      'racks-and-cables',
-      'other-networking-products',
-      'network-and-security-support',
-      'telecommunications',
-      'fixed-data-and-internet',
-      'fixed-voice',
-      'mobiles',
-      'radio',
-      'professional-services',
-      'managed-services',
-      'service-desk',
-      'contact-centre',
-      'network-and-security-operations',
-      'data-centre-operations',
-      'security-operations',
-      'advisory-consulting',
-      'ict-workforce',
-      'strategy-planning-policy-and-risk',
-      'audits-compliance-and-assurance',
-      'project-and-change-management',
-      'training-and-development',
-    ]
-
-    def self.all_services
-      service_levels.keys + service_levels.values.flatten
-    end
-
-    def self.service_levels
-      {
+    SERVICE_LEVELS = {
+      'community-and-social-services' => {
+        'bushfire-affected-communities-rebuild' => [
+          'agency-government-or-private-buyer',
+          'building-works-associated-trades-and-materials',
+          'health',
+          'hospitality',
+          'native-wildlife',
+          'other',
+        ],
+      },
+      'educational-supplies' => {},
+      'engineering-research-and-technology-services' => {
+        'remote-sensing-services-and-equipment' => [
+          'aircraft-services',
+          'data-and-processing',
+          'remote-sensing-hardware-and-software',
+        ],
+        'technical-services ' => [
+          'design',
+          'survey',
+          'geotechnical-and-pavement',
+          'environment',
+          'estimating',
+          'construction-services',
+          'health-and-safety-in-design',
+        ],
+      },
+      'fleet-management' => {
+        'motor-vehicles' => [
+          'buses',
+          'heavy-commercial',
+          'P/U-C/C-4x2',
+          'C/C-C/C-4x4',
+          'passenger-large',
+          'passenger-light',
+          'passenger-medium',
+          'passenger-small',
+          'passenger-upper-large',
+          'people-mover',
+          'SUV-large',
+          'SUV-medium',
+          'SUV-small',
+          'Vans/CC',
+        ]
+      },
+      'food' => {},
+      'hardware-and-construction' => {
+        'construction-under-one-million' => [
+          'building-services',
+          'construction-works',
+          'trades',
+        ],
+        'heritage-conservation-consultants' => [
+          'consultant',
+          'structural-engineer',
+          'landscape-specialist',
+          'interiors',
+          'archaeologist-and-excavation-director',
+          'research-and-support-archaeologist',
+          'heritage-interpretation',
+          'historian',
+          'materials-conservators',
+          'materials-testing',
+          'other',
+        ],
+        'land-housing-residential' => [
+          'building-upgrade-projects',
+          'new-construction-projects',
+        ],
+      },
+      'healthcare-services' => {
+        'emergency-supplies' => [],
+        'employment-related-medical-services' => [],
+      },
+      'information-technology' => {
+        'advisory-consulting' => [
+          'strategy-planning-policy-and-risk',
+          'audits-compliance-and-assurance',
+          'project-and-change-management',
+          'training-and-development',
+        ],
         'cloud-services' => [
           'cloud-applications-and-software',
           'cloud-hosting-and-infrastructure',
           'cloud-support',
+        ],
+        'end-user-computing' => [
+          'desktops-workstations-and-thin-clients',
+          'laptops-tablets-and-hybrids',
+          'printers-screens-and-monitors',
+          'peripherals-accessories-and-other-end-user-computing-products',
+          'end-user-computing-support',
+        ],
+        'infrastructure' => [
+          'modems-and-routers',
+          'switches-servers-and-storage',
+          'racks-and-cables',
+          'other-networking-products',
+          'network-and-security-support',
+        ],
+        'managed-services' => [
+          'service-desk',
+          'contact-centre',
+          'network-and-security-operations',
+          'data-centre-operations',
+          'security-operations',
         ],
         'software-development' => [
           'digital-design',
@@ -248,20 +288,6 @@ module SellerService
           'specialised-software',
           'network-and-security-software',
         ],
-        'end-user-computing' => [
-          'desktops-workstations-and-thin-clients',
-          'laptops-tablets-and-hybrids',
-          'printers-screens-and-monitors',
-          'peripherals-accessories-and-other-end-user-computing-products',
-          'end-user-computing-support',
-        ],
-        'infrastructure' => [
-          'modems-and-routers',
-          'switches-servers-and-storage',
-          'racks-and-cables',
-          'other-networking-products',
-          'network-and-security-support',
-        ],
         'telecommunications' => [
           'fixed-data-and-internet',
           'fixed-voice',
@@ -269,33 +295,189 @@ module SellerService
           'radio',
           'professional-services',
         ],
-        'managed-services' => [
-          'service-desk',
-          'contact-centre',
-          'network-and-security-operations',
-          'data-centre-operations',
-          'security-operations',
+      },
+      'professional-services' => {
+        'performance-and-management-services' => [
+          'government-and-business-strategy',
+          'business-processes',
+          'project-management',
+          'change-management',
+          'financial-services',
+          'audit-quality-assurance-and-risk',
+          'taxation',
+          'human-resources',
+          'procurement-and-supply-chain',
+          'marketing-and-customer',
+          'actuarial-services',
+          'transaction-services',
+          'specialised-services',
+          'infrastructure',
         ],
-        'advisory-consulting' => [
-          'ict-workforce',
-          'strategy-planning-policy-and-risk',
-          'audits-compliance-and-assurance',
-          'project-and-change-management',
-          'training-and-development',
+        'government.architect' => [
+          'strategy',
+          'design-excellence',
         ],
-      }
+        'consultants-in-construction' => [
+          'engineering',
+          'architectural',
+          'assessment',
+          'planning',
+          'management',
+        ],
+        'statutory-appointments' => [
+          'conveyancers-licensing-manager',
+          'conveyancers-licensing-receiver',
+          'property-stock-and-business-agents-accounts-examiner',
+          'property-stock-and-business-agents-manager',
+          'property-stock-and-business-agents-receiver',
+        ],
+        'subsidence-advisory-nsw-independent-assessment' => [
+          'building-inspector-and-estimator',
+          'civil-engineering',
+          'environmental-studies',
+          'geotechnical-engineering',
+          'property-valuer',
+          'quantity-surveying',
+          'rail-engineers',
+          'structural-engineering',
+          'surveyor',
+          'utility-and-asset-locating-consultant',
+        ],
+        'land-asset-valuation' => [
+          'area',
+          'land-value-advisory-and-objection',
+          'compensation-recommendation-of-determination',
+          'real-property-and-asset-valuations',
+          'acquisition-valuation-services',
+        ],
+        'digital-engineering-service' => [
+          'digital-engineering-advisory',
+          'business-processes',
+          'technology',
+          'data-management',
+          'modelling',
+          'visualisation',
+          'education-and-training',
+          'additional-digital-services',
+        ],
+      },
+      'marketing-and-advertising' => {
+        'editorial-copy-writing' => [],
+        'design-graphic-and-fine-art' => [],
+        'advertising-and-digital-communications' => [
+          'market-research',
+          'strategy',
+          'marketing-and-campaign-services',
+          'public-relations',
+          'social-media',
+          'indigenous-communications-and-engagement',
+          'CALD-communications-and-engagement',
+          'visual-communications',
+          'written-communications',
+          'digital-communications',
+          'production',
+        ],
+      },
+      'office-supplies-and-services' => {
+        'office-and-workplace' => [],
+        'office-furniture' => [],
+        'office-stationery-supply' => [],
+      },
+      'property-management-and-maintenance' => {
+        'property-management' => [],
+        'property-maintenance' => [],
+        'utilities' => [],
+      },
+      'recruitment-and-human-services' => {
+        'contingent-workforce' => [
+          'administration',
+          'finance',
+          'specialist',
+          'industrial',
+          'industrial-(ACT)',
+          'technical',
+          'ICT-Network and Equipment',
+          'ICT-Management',
+          'ICT-Applications',
+          'transport',
+          'education',
+          'other',
+          'NSW-state-emergency-services',
+          'home-care-service-of-NSW',
+        ],
+        'recruitment-services' => [],
+        'talent-acquisition' => [
+          'design-and-delivery-of-assessments',
+          'talent-search',
+          'psychometric-tools',
+          'recruitment-technologies',
+        ],
+      },
+      'travel' => {
+        'travel-and-transport' => [],
+        'domestic-travel-accommodation' => [],
+      },
+      'utilities' => {
+        'energy-efficiency-services' => [],
+        'rolling-stock-engineering-and-specialist-services' => [],
+        'solar-PPA' => [],
+      },
+    }
+
+    before_save :remove_invalid_services
+
+    def remove_invalid_services
+      self.services = (self.services || []) & self.class.all_services
+    end
+
+    def self.service_levels
+      SellerVersion::SERVICE_LEVELS
+    end
+
+    def self.super_category service
+      service_levels.each do |k, v|
+        return k if v.keys.include? service
+        v.each do |k, v|
+          return k if v.include? service
+        end
+      end
+      nil
+    end
+
+    def self.sub_categories service
+
+    end
+
+    def self.all_services
+      self.level_1_services + level_2_services + level_3_services
+    end
+
+    def self.level_1_and_2_services
+      self.level_1_services + level_2_services
+    end
+
+    def self.level_1_services
+      SERVICE_LEVELS.keys
     end
 
     def self.level_2_services
-      service_levels.keys
+      SERVICE_LEVELS.values.map(&:keys).flatten
     end
 
     def self.level_3_services
-      service_levels.values.flatten
+      SERVICE_LEVELS.values.map(&:values).flatten
+    end
+
+    def level_1_services
+      (services || []).to_a & self.class.level_1_services
     end
 
     def level_2_services
       (services || []).to_a & self.class.level_2_services
+    end
+
+    def level_3_services
+      (services || []).to_a & self.class.level_3_services
     end
 
     def government_experience

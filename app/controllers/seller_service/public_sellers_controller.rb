@@ -10,6 +10,11 @@ module SellerService
                                                 buyer_view: buyer_view)
     end
 
+    def clear_params
+      params[:category] = nil unless SellerService::SellerVersion.level_1_and_2_services.include?(params[:category])
+      params[:services] = (params[:services]&.to_a || []) & SellerService::SellerVersion.all_services
+    end
+
     def scoped_seller_versions
       SellerService::SellerVersion.approved.yield_self do |rel|
         [
@@ -37,6 +42,7 @@ module SellerService
         if params[:all]
           @seller_versions = scoped_seller_versions
         else
+          clear_params
           page = (params[:page] || 1).to_i
 
           if params[:order] == 'AtoZ'
@@ -82,10 +88,13 @@ module SellerService
     end
 
     def category_services
-      if params[:category].in?(SellerService::SellerVersion.service_levels.keys)
-        SellerService::SellerVersion.service_levels[params[:category]]
+      if params[:category].in?(SellerService::SellerVersion.level_1_services)
+        SellerService::SellerVersion.service_levels[params[:category]].keys
+      elsif params[:category].in?(SellerService::SellerVersion.level_2_services)
+        super_cat = SellerService::SellerVersion.super_category params[:category]
+        SellerService::SellerVersion.service_levels[super_cat][params[:category]]
       else
-        SellerService::SellerVersion.service_levels.keys
+        SellerService::SellerVersion.level_1_services
       end
     end
 
@@ -99,22 +108,12 @@ module SellerService
       end.to_h
     end
 
-    def tag_counters
-      [:services, :identifiers].map do |filter|
-        [ filter, (params[filter] || []).map do |tag|
-            [ tag, custom_scopes(filter).
-              send("with_"+filter.to_s, (params[filter] || []) - [tag]).count ]
-          end.to_h
-        ]
-      end.to_h
-    end
-
     def count 
+      clear_params
       render json: {
         globalCount: SellerService::SellerVersion.approved.count(:id),
         totalCount: scoped_seller_versions.count(:id),
         filters: filter_counters,
-        tags: tag_counters,
       }
     end
 
@@ -123,6 +122,17 @@ module SellerService
         pending: SellerService::SellerVersion.pending.count(:id),
         approved: SellerService::SellerVersion.approved.count(:id),
       }
+    end
+
+    def top_categories
+      l = SellerService::SellerVersion.service_levels.keys
+      render json: l.map{|k| {key: k, label: k.gsub('-','_').humanize}}
+    end
+
+    def sub_categories
+      h = SellerService::SellerVersion.service_levels.map{|k,v| [k, v.keys]}.to_h
+      g = SellerService::SellerVersion.service_levels.values.reduce(h){|v, h| h.merge(v)}
+      render json: g.map{|k,v| [k, v.map{|s| {key: s, label: s.gsub('-','_').humanize}}]}.to_h
     end
 
     private

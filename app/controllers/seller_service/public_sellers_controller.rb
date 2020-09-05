@@ -102,7 +102,8 @@ module SellerService
       filters.map do |filter, values|
         [ filter,
           values.map do |value|
-            [ value, custom_scopes(filter).send("with_"+filter.to_s, [value]).count ]
+            [ value, SellerService::SellerVersion.approved.with_category(params[:category]).
+              send("with_"+filter.to_s, [value]).count ]
           end.to_h
         ]
       end.to_h

@@ -167,8 +167,8 @@ module SellerService
     SERVICE_LEVELS = {
       'community-and-social-services' => {
         'bushfire-affected-communities-rebuild' => [
-          'agency-government-or-private-buyer',
-          'building-works-associated-trades-and-materials',
+          'agency,-government-or-private-buyer',
+          'building-works,-associated-trades-and-materials',
           'health',
           'hospitality',
           'native-wildlife',
@@ -207,12 +207,12 @@ module SellerService
           'SUV-large',
           'SUV-medium',
           'SUV-small',
-          'Vans/CC',
+          'vans/CC',
         ]
       },
       'food' => {},
       'hardware-and-construction' => {
-        'construction-under-one-million' => [
+        'construction-under-$1-million' => [
           'building-services',
           'construction-works',
           'trades',
@@ -222,7 +222,7 @@ module SellerService
           'structural-engineer',
           'landscape-specialist',
           'interiors',
-          'archaeologist-and-excavation-director',
+          'archaeologist-/-excavation-director',
           'research-and-support-archaeologist',
           'heritage-interpretation',
           'historian',
@@ -230,7 +230,7 @@ module SellerService
           'materials-testing',
           'other',
         ],
-        'land-housing-residential' => [
+        'land,-housing,-residential' => [
           'building-upgrade-projects',
           'new-construction-projects',
         ],
@@ -241,8 +241,8 @@ module SellerService
       },
       'information-technology' => {
         'advisory-and-consulting' => [
-          'strategy-planning,-policy-and-risk',
-          'audits-compliance-and-assurance',
+          'strategy,-planning,-policy-and-risk',
+          'audits,-compliance-and-assurance',
           'project-and-change-management',
           'training-and-development',
         ],
@@ -255,7 +255,7 @@ module SellerService
           'desktops-workstations-and-thin-clients',
           'laptops,-tablets-and-hybrids',
           'printers,-screens-and-monitors',
-          'peripherals-accessories-and-other-end-user-computing-products',
+          'peripherals,-accessories-and-other-end-user-computing-products',
           'end-user-computing-support',
         ],
         'infrastructure-and-network' => [
@@ -274,7 +274,7 @@ module SellerService
         ],
         'software-design-and-development' => [
           'digital-design',
-          'software-development-integration-and-implementation',
+          'software-development,-integration-and-implementation',
           'mobile-applications-development',
           'system-and-software-testing,-UAT-and-assurance',
           'system-architecture',
@@ -303,7 +303,7 @@ module SellerService
           'project-management',
           'change-management',
           'financial-services',
-          'audit-quality-assurance-and-risk',
+          'audit,-quality-assurance-and-risk',
           'taxation',
           'human-resources',
           'procurement-and-supply-chain',
@@ -327,11 +327,11 @@ module SellerService
         'statutory-appointments' => [
           'conveyancers-licensing-manager',
           'conveyancers-licensing-receiver',
-          'property-stock-and-business-agents-accounts-examiner',
-          'property-stock-and-business-agents-manager',
-          'property-stock-and-business-agents-receiver',
+          'property,-stock-and-business-accounts-examiner',
+          'property,-stock-and-business-manager',
+          'property,-stock-and-business-receiver',
         ],
-        'subsidence-advisory-nsw-independent-assessment' => [
+        'subsidence-advisory-NSW-independent-assessment' => [
           'building-inspector-and-estimator',
           'civil-engineering',
           'environmental-studies',
@@ -362,7 +362,7 @@ module SellerService
         ],
       },
       'marketing-and-advertising' => {
-        'editorial-copy-writing' => [],
+        'editorial,-copy-writing' => [],
         'design,-graphic-and-fine-art' => [],
         'advertising-and-digital-communications' => [
           'market-research',
@@ -396,9 +396,9 @@ module SellerService
           'industrial',
           'industrial-(ACT)',
           'technical',
-          'ICT-Network and Equipment',
-          'ICT-Management',
-          'ICT-Applications',
+          'ICT-network-and-equipment',
+          'ICT-management',
+          'ICT-applications',
           'transport',
           'education',
           'other',

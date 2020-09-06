@@ -12,28 +12,6 @@ module SellerService
       @sellers = sellers
     end
 
-    def export_params(user, version)
-      {
-        firstname: user.full_name&.split(' ')&.first || '',
-        surname: user.full_name&.split(' ')&.last || '',
-        email: user.email,
-        title: '',
-        companyName: version.name || '',
-        tradingName: version.name || '',
-        "ABN": version.abn || '',
-        companyPhone: version.contact_phone || '',
-        mobilePhone: version.contact_phone || '',
-        address: {
-          addressLine1: version.addresses&.first['address'] || '',
-          addressLine2: version.addresses&.first['address_2'] || '',
-          city: version.addresses&.first['suburb'] || '',
-          state: version.addresses&.first['state']&.upcase || '',
-          postcode: version.addresses&.first['postcode'] || '',
-          country: (ISO3166::Country.new(version.addresses&.first['country']).name.upcase rescue '')
-        }
-      }
-    end
-
     def attributes(seller)
       profile = seller&.last_profile_version
       if seller
@@ -42,9 +20,6 @@ module SellerService
           name: seller.latest_version&.name,
           status: seller.status,
           live: seller.live?,
-          offersCloud: seller.approved_version&.services&.include?('cloud-services') ||
-                       seller.approved_version&.govdc? || seller.approved_version&.offers_cloud?,
-          offersTelco: seller.approved_version&.services&.include?('telecommunications'),
           canBeWithdrawn: seller.can_be_withdrawn?,
           lastProfileUpdate: profile&.updated_at&.strftime("%d %B %Y"),
           lastAccountUpdate: seller.latest_version&.updated_at&.strftime("%d %B %Y"),

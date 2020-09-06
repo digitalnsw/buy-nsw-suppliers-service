@@ -127,13 +127,15 @@ module SellerService
 
     def top_categories
       l = SellerService::SellerVersion.service_levels.keys
-      render json: l.map{|k| {key: k, label: k.gsub('-','_').humanize}}
+      render json: l.map{|k| {key: k, label: 'friendly'}}
     end
 
     def sub_categories
       h = SellerService::SellerVersion.service_levels.map{|k,v| [k, v.keys]}.to_h
       g = SellerService::SellerVersion.service_levels.values.reduce(h){|v, h| h.merge(v)}
-      render json: g.map{|k,v| [k, v.map{|s| {key: s, label: s.gsub('-','_').humanize}}]}.to_h
+      f = g.map{|k,v| [k, v.map{|s| {key: s, label: 'friendly'}}]}
+
+      render json: f.select{|k,v| v.present?}.to_h
     end
 
     private

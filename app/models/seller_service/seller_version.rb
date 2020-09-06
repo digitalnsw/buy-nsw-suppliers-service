@@ -240,46 +240,46 @@ module SellerService
         'employment-related-medical-services' => [],
       },
       'information-technology' => {
-        'advisory-consulting' => [
+        'advisory-and-consulting' => [
           'strategy-planning-policy-and-risk',
           'audits-compliance-and-assurance',
           'project-and-change-management',
           'training-and-development',
         ],
-        'cloud-services' => [
+        'cloud-products-and-support' => [
           'cloud-applications-and-software',
           'cloud-hosting-and-infrastructure',
           'cloud-support',
         ],
-        'end-user-computing' => [
+        'end-user-computing-and-peripherals' => [
           'desktops-workstations-and-thin-clients',
           'laptops-tablets-and-hybrids',
           'printers-screens-and-monitors',
           'peripherals-accessories-and-other-end-user-computing-products',
           'end-user-computing-support',
         ],
-        'infrastructure' => [
+        'infrastructure-and-network' => [
           'modems-and-routers',
           'switches-servers-and-storage',
           'racks-and-cables',
           'other-networking-products',
           'network-and-security-support',
         ],
-        'managed-services' => [
+        'managed-and-outsourced-services' => [
           'service-desk',
           'contact-centre',
           'network-and-security-operations',
           'data-centre-operations',
           'security-operations',
         ],
-        'software-development' => [
+        'software-design-and-development' => [
           'digital-design',
           'software-development-integration-and-implementation',
           'mobile-applications-development',
           'system-and-software-testing-uat-and-assurance',
           'system-architecture',
         ],
-        'software-licensing' => [
+        'software-licensing-and-maintenance' => [
           'systems-and-operating-software',
           'enterprise-and-platforms-software',
           'productivity-software',

@@ -4,9 +4,9 @@ module SellerService
   class SellersController < SellerService::ApplicationController
     skip_before_action :verify_authenticity_token, raise: false, only: [:approve, :decline, :assign]
     before_action :authenticate_service, only: [:approve, :decline, :assign, :destroy]
-    before_action :authenticate_service_or_user, only: [:show, :level_2_services]
-    before_action :authenticate_user, except: [:show, :level_2_services, :approve, :decline, :assign]
-    before_action :set_seller, only: [:show, :update, :destroy, :level_2_services]
+    before_action :authenticate_service_or_user, only: [:show, :all_services]
+    before_action :authenticate_user, except: [:show, :all_services, :approve, :decline, :assign]
+    before_action :set_seller, only: [:show, :update, :destroy, :all_services]
     before_action :set_seller_by_id, only: [:approve, :decline, :assign]
 
     def serializer
@@ -83,8 +83,8 @@ module SellerService
       render json: serializer.show
     end
 
-    def level_2_services
-      render json: @seller&.latest_version.level_2_services
+    def all_services
+      render json: @seller&.latest_version.all_services
     end
 
     def run_operation(operation)

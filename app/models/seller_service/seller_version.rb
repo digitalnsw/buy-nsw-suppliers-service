@@ -508,12 +508,12 @@ module SellerService
 
     def self.with_category(category)
       return all if category.blank?
-      where("services && ARRAY[?]", [category])
+      where(":category = ANY(services)", category: category)
     end
 
     def self.with_services(services)
       return all if services.blank?
-      where("services && ARRAY[?]", services)
+      where("services && ARRAY[:services]", services: services)
     end
 
     def self.with_identifiers(identifiers)

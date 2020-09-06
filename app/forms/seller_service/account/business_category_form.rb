@@ -19,26 +19,26 @@ module SellerService::Account
     validates :services, 'shared_modules/json': { schema: [
       Set.new(SellerService::SellerVersion.all_services)
     ] }
-    # validate :no_more_than_5_level_2_services
 
     def establishment_date_in_range
       establishment_date.present? && establishment_date > 5.years.ago
     end
 
-    def no_more_than_5_level_2_services
-      if level_2_services.size > 5
-        errors.add(:services, "You can only select five ICT categories. This is so buyers can find you. Please select the products and services most appealing to buyers.")
-      end
+    def level_1_services
+      self.services ||= []
+      @level_1_services ||= services.to_a & SellerService::SellerVersion.level_1_services
     end
 
     def level_2_services
       self.services ||= []
-      @level_2_services ||= services.to_a & SellerService::SellerVersion.level_2_services
+      @level_2_services ||= seller.draft_version.level_2_services
+      # @level_2_services ||= services.to_a & SellerService::SellerVersion.level_2_services
     end
 
     def level_3_services
       self.services ||= []
-      @level_3_services ||= services.to_a & SellerService::SellerVersion.service_levels.slice(*level_2_services).values.flatten
+      @level_3_services ||= seller.draft_version.level_3_services
+      # @level_3_services ||= services.to_a & SellerService::SellerVersion.level_3_services
     end
 
     def after_load
@@ -53,7 +53,7 @@ module SellerService::Account
       self.sme = false if number_of_employees == '200plus' || overseas
       self.start_up = false unless establishment_date_in_range
 
-      self.services = level_2_services + level_3_services
+      self.services = level_1_services + level_2_services + level_3_services
     end
   end
 end

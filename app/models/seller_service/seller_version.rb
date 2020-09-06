@@ -444,12 +444,8 @@ module SellerService
       nil
     end
 
-    def self.sub_categories service
-
-    end
-
     def self.all_services
-      self.level_1_services + level_2_services + level_3_services
+      level_1_services + level_2_services + level_3_services
     end
 
     def self.level_1_and_2_services

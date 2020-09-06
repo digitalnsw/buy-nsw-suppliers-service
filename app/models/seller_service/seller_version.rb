@@ -176,7 +176,7 @@ module SellerService
         ],
       },
       'educational-supplies' => {},
-      'engineering-research-and-technology-services' => {
+      'engineering,-research-and-technology-services' => {
         'remote-sensing-services-and-equipment' => [
           'aircraft-services',
           'data-and-processing',
@@ -241,7 +241,7 @@ module SellerService
       },
       'information-technology' => {
         'advisory-and-consulting' => [
-          'strategy-planning-policy-and-risk',
+          'strategy-planning,-policy-and-risk',
           'audits-compliance-and-assurance',
           'project-and-change-management',
           'training-and-development',
@@ -253,14 +253,14 @@ module SellerService
         ],
         'end-user-computing-and-peripherals' => [
           'desktops-workstations-and-thin-clients',
-          'laptops-tablets-and-hybrids',
-          'printers-screens-and-monitors',
+          'laptops,-tablets-and-hybrids',
+          'printers,-screens-and-monitors',
           'peripherals-accessories-and-other-end-user-computing-products',
           'end-user-computing-support',
         ],
         'infrastructure-and-network' => [
           'modems-and-routers',
-          'switches-servers-and-storage',
+          'switches,-servers-and-storage',
           'racks-and-cables',
           'other-networking-products',
           'network-and-security-support',
@@ -276,7 +276,7 @@ module SellerService
           'digital-design',
           'software-development-integration-and-implementation',
           'mobile-applications-development',
-          'system-and-software-testing-uat-and-assurance',
+          'system-and-software-testing,-UAT-and-assurance',
           'system-architecture',
         ],
         'software-licensing-and-maintenance' => [
@@ -363,7 +363,7 @@ module SellerService
       },
       'marketing-and-advertising' => {
         'editorial-copy-writing' => [],
-        'design-graphic-and-fine-art' => [],
+        'design,-graphic-and-fine-art' => [],
         'advertising-and-digital-communications' => [
           'market-research',
           'strategy',

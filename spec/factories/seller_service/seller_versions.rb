@@ -24,7 +24,7 @@ module SellerService
         abn
         website_url 'http://example.org'
         linkedin_url 'http://linkedin.com/example'
-        services ['cloud-services']
+        services ['cloud-products-and-support']
       end
 
       trait :with_full_seller_profile do

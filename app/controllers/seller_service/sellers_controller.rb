@@ -84,7 +84,7 @@ module SellerService
     end
 
     def all_services
-      render json: @seller&.latest_version.all_services
+      render json: @seller&.latest_version.services
     end
 
     def run_operation(operation)

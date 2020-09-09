@@ -151,6 +151,9 @@ module SellerService
     scope :sme,               ->            { where(sme: true) }
     scope :start_up,          ->            { where(start_up: true) }
 
+    enumerize :abn_exempt, in: [
+      'non-exempt', 'non-australian', 'insufficient-turnover', 'other'
+    ]
     enumerize :number_of_employees, in: [
       'sole', '2to4', '5to19', '20to49', '50to99', '100to199', '200plus',
     ]
@@ -172,7 +175,7 @@ module SellerService
           'health',
           'hospitality',
           'native-wildlife',
-          'other',
+          'other-bushfire-services',
         ],
       },
       'educational-supplies' => {},
@@ -228,7 +231,7 @@ module SellerService
           'historian',
           'materials-conservators',
           'materials-testing',
-          'other',
+          'other-heritage-consultants',
         ],
         'land,-housing,-residential' => [
           'building-upgrade-projects',
@@ -293,13 +296,13 @@ module SellerService
           'fixed-voice',
           'mobiles',
           'radio',
-          'professional-services',
+          'telco-professional-services',
         ],
       },
       'professional-services' => {
         'performance-and-management-services' => [
           'government-and-business-strategy',
-          'business-processes',
+          'management-business-processes',
           'project-management',
           'change-management',
           'financial-services',
@@ -313,8 +316,8 @@ module SellerService
           'specialised-services',
           'infrastructure',
         ],
-        'government.architect' => [
-          'strategy',
+        'government-architect' => [
+          'strategy-architect',
           'design-excellence',
         ],
         'consultants-in-construction' => [
@@ -352,7 +355,7 @@ module SellerService
         ],
         'digital-engineering-service' => [
           'digital-engineering-advisory',
-          'business-processes',
+          'digital-business-processes',
           'technology',
           'data-management',
           'modelling',
@@ -366,7 +369,7 @@ module SellerService
         'design,-graphic-and-fine-art' => [],
         'advertising-and-digital-communications' => [
           'market-research',
-          'strategy',
+          'advertisement-strategy',
           'marketing-and-campaign-services',
           'public-relations',
           'social-media',
@@ -386,7 +389,7 @@ module SellerService
       'property-management-and-maintenance' => {
         'property-management' => [],
         'property-maintenance' => [],
-        'utilities' => [],
+        'utilities-management' => [],
       },
       'recruitment-and-human-services' => {
         'contingent-workforce' => [
@@ -401,7 +404,7 @@ module SellerService
           'ICT-applications',
           'transport',
           'education',
-          'other',
+          'other-workforce',
           'NSW-state-emergency-services',
           'home-care-service-of-NSW',
         ],
@@ -432,6 +435,13 @@ module SellerService
 
     def self.service_levels
       SellerVersion::SERVICE_LEVELS
+    end
+
+    def self.flat_sub_categories
+      h = self.service_levels.map{|k,v| [k, v.keys]}.to_h
+      g = self.service_levels.values.reduce(h){|v, h| h.merge(v)}
+      f = g.map{|k,v| [k, v.map{|s| {key: s, label: 'friendly'}}]}
+      f.select{|k,v| v.present?}.to_h
     end
 
     def self.super_category service

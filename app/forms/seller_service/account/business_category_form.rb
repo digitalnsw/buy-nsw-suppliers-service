@@ -13,6 +13,7 @@ module SellerService::Account
 
     field :can_be_startup, usage: :front_end
     field :overseas, usage: :front_end
+    field :sub_categories, type: :json, usage: :front_end
 
     field :services, type: :json
     validates_presence_of :services
@@ -42,6 +43,7 @@ module SellerService::Account
     end
 
     def after_load
+      self.sub_categories = SellerService::SellerVersion.flat_sub_categories
       self.can_be_startup = establishment_date_in_range
       self.overseas = corporate_structure == 'overseas'
       self.start_up = false unless establishment_date_in_range

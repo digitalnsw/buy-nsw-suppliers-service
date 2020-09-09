@@ -6,6 +6,12 @@ module SellerService
       Set.new(SellerService::SellerVersion.all_services)
     ] }
 
+    field :sub_categories, type: :json, usage: :front_end
+
+    def after_load
+      self.sub_categories = SellerService::SellerVersion.flat_sub_categories
+    end
+
     def level_1_services
       self.services ||= []
       @level_1_services ||= services.to_a & SellerService::SellerVersion.level_1_services

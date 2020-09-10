@@ -338,6 +338,65 @@ module SellerService
       ws.mark_as_submitted! if ws && ws.joined?
     end
 
+
+    def base_fields
+      [
+        :name,
+        :abn,
+        :establishment_date,
+        :contact_first_name,
+        :contact_last_name,
+        :contact_email,
+        :contact_phone,
+        :contact_position,
+        :representative_first_name,
+        :representative_last_name,
+        :representative_email,
+        :representative_phone,
+        :representative_position,
+        :addresses,
+        :number_of_employees,
+        :australia_employees,
+        :nsw_employees,
+        :annual_turnover,
+        :start_up,
+        :sme,
+        :not_for_profit,
+        :australian_owned,
+        :regional,
+        :indigenous,
+        :disability,
+        :corporate_structure,
+        :business_structure,
+        :services,
+        :receivership,
+        :receivership_details,
+        :bankruptcy,
+        :bankruptcy_details,
+        :investigations,
+        :investigations_details,
+        :legal_proceedings,
+        :legal_proceedings_details,
+
+        :financial_statement_ids,
+        :financial_statement_expiry,
+        :professional_indemnity_certificate_ids,
+        :professional_indemnity_certificate_expiry,
+        :workers_compensation_certificate_ids,
+        :workers_compensation_certificate_expiry,
+        :product_liability_certificate_ids,
+        :product_liability_certificate_expiry,
+        :schemes_and_panels,
+      ]
+    end
+
+    def auto_approve! user
+      create_profile(pending_version)
+      save_field_statuses(base_fields.map{|f| [f, 'accepted'] }.to_h)
+      pending_version.approve!
+      make_live!
+    end
+
     def submit(user, props)
       raise SharedModules::AlertError.new("Supplier application can't be submitted unless all forms are completed.") unless can_be_submitted?
       update_waiting_seller
@@ -347,22 +406,30 @@ module SellerService
         pending_version.id,
         :seller_version_submitted.to_s
       )
+
+      unless approved_version
+        auto_approved(user)
+        create_event(user, "Seller self approved by #{user.email}")
+      end
+
+      UserService::SyncTendersJob.new.perform user.id
+
       "Seller submitted by #{user.email}."
     end
 
     def self.forms
       {
-        eligibility: SellerService::EligibilityForm,
+#        eligibility: SellerService::EligibilityForm,
         business_name: SellerService::BusinessNameForm,
         contact_detail: SellerService::ContactDetailForm,
         company_type: SellerService::CompanyTypeForm,
         product_category: SellerService::ProductCategoryForm,
         legal_disclosure: SellerService::LegalDisclosureForm,
-        insurance_and_financial_document: SellerService::InsuranceAndFinancialDocumentForm,
-        company_profile: SellerService::CompanyProfileForm,
-        membership_and_award: SellerService::MembershipAndAwardForm,
-        accreditation_and_license: SellerService::AccreditationAndLicenseForm,
-        complete_application: SellerService::CompleteApplicationForm,
+#        insurance_and_financial_document: SellerService::InsuranceAndFinancialDocumentForm,
+#        company_profile: SellerService::CompanyProfileForm,
+#        membership_and_award: SellerService::MembershipAndAwardForm,
+#        accreditation_and_license: SellerService::AccreditationAndLicenseForm,
+#        complete_application: SellerService::CompleteApplicationForm,
       }
     end
 

@@ -71,7 +71,7 @@ module SellerService
       end
 
       event :approve do
-        transitions from: :pending, to: :approved, guard: :assignee_present?
+        transitions from: :pending, to: :approved
       end
 
       event :deactivate do

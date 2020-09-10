@@ -128,10 +128,9 @@ module SellerService
           u.seller_ids |= [sv.seller_id]
 
           u.skip_confirmation_notification!
-          u.skip_sync = true
           u.save!
           
-          s.owner_id = u.id if s.owner_id.nil?
+          s.owner_id ||= u.id
           s.save!
         end
       end

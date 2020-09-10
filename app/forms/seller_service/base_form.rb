@@ -40,7 +40,7 @@ module SellerService
       end
       before_save if defined? before_save
       (two_way_fields+back_end_fields).each do |field|
-        version.send(field.to_s + '=', send(field))
+        version.send(field.to_s + '=', send(field)) if version.respond_to?(field.to_s + '=')
       end
       version.save!
     end

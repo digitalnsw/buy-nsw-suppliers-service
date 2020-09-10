@@ -59,6 +59,9 @@ module SellerService
         next unless abn.present? && ABN.valid?(abn)
         abn = ABN.new(abn).to_s
 
+        s = ::SellerService::Seller.find_by(uuid: row['PanelVendorUUID'])
+        next if s.present?
+
         sv = SellerVersion.where(state: [:pending, :approved], abn: abn).first
         s = sv&.seller;
 
@@ -113,9 +116,10 @@ module SellerService
           sv.save!
 
           # import even if registered user is suspended
-          u = ::User.find_or_initialize_by(email: row['RegisteredUserEmail'].downcase)
+          u = ::User.find_by(uuid: row['RegisteredUserUUID'])
+          u ||= ::User.find_or_initialize_by(email: row['RegisteredUserEmail'].downcase)
           name = (row['RegisteredUserGivenName'].to_s + ' ' + row['RegisteredUserSurname'].to_s).strip
-          u.full_name = name if name.present?
+          u.full_name ||= name if name.present?
           u.password = u.password_confirmation = SecureRandom.hex(32) unless u.persisted?
 
           u.uuid = row['RegisteredUserUUID']

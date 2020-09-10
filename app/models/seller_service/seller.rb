@@ -390,7 +390,7 @@ module SellerService
       ]
     end
 
-    def auto_approve! user
+    def auto_approve!
       create_profile(pending_version)
       save_field_statuses(base_fields.map{|f| [f, 'accepted'] }.to_h)
       pending_version.approve!
@@ -408,7 +408,7 @@ module SellerService
       )
 
       unless approved_version
-        auto_approved(user)
+        auto_approve!
         create_event(user, "Seller self approved by #{user.email}")
       end
 

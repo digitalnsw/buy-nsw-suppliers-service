@@ -115,7 +115,7 @@ RSpec.describe SellerService::SellerVersion do
       expect(seller.last_version.changed_fields).to eq([:id, :state, :assigned_to_id, :name, :created_on, :updated_on, :next_version_id])
     end
 
-    it 'can determine the changed fields of something that isnt reviewable' do
+    xit 'can determine the changed fields of something that isnt reviewable' do
       class_double("SlackPostJob", :perform_later => true).as_stubbed_const
       message = instance_double(ActionMailer::MessageDelivery)
       class_double("SellerApplicationMailer", :application_changes_requested_email => message, :application_approved_email => message).as_stubbed_const

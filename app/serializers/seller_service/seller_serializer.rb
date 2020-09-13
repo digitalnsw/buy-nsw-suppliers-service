@@ -23,7 +23,6 @@ module SellerService
           canBeWithdrawn: seller.can_be_withdrawn?,
           lastProfileUpdate: profile&.updated_at&.strftime("%d %B %Y"),
           lastAccountUpdate: seller.latest_version&.updated_at&.strftime("%d %B %Y"),
-          owner_id: seller.owner_id,
         })
       end
     end

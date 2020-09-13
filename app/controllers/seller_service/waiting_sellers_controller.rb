@@ -29,7 +29,7 @@ module SellerService
 
     def initiate_seller
       s = SellerService::WaitingSeller.where(id: params[:id]).first
-      s.create_seller!(params[:owner_id].to_i)
+      s.create_seller!
       raise SharedModules::NotFound if s.nil?
       render json: { seller_id: s.seller.id }
     end

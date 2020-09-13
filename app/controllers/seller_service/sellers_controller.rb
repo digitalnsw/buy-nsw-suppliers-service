@@ -23,7 +23,7 @@ module SellerService
         @seller = SellerService::Seller.where(id: session_user.seller_id).first
       else
         SellerService::Seller.transaction do
-          @seller = SellerService::Seller.new(state: :draft, owner_id: session_user.id)
+          @seller = SellerService::Seller.new(state: :draft)
           @seller.save!
           SharedResources::RemoteUser.update_seller(session_user.id, @seller.id)
           @seller.versions.create!(state: :draft, name: '', started_at: Time.now)

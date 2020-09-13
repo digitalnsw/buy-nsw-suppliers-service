@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_10_213902) do
+ActiveRecord::Schema.define(version: 2020_09_12_125124) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -520,7 +520,6 @@ ActiveRecord::Schema.define(version: 2020_09_10_213902) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "discarded_at"
-    t.integer "owner_id"
     t.string "uuid"
     t.index ["discarded_at"], name: "index_sellers_on_discarded_at"
   end
@@ -606,7 +605,8 @@ ActiveRecord::Schema.define(version: 2020_09_10_213902) do
     t.boolean "has_password", default: false
     t.integer "seller_ids", default: [], array: true
     t.boolean "suspended", default: false
-    t.boolean "opt_out", default: false
+    t.boolean "opted_out", default: false
+    t.json "permissions", default: {}
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
@@ -654,5 +654,4 @@ ActiveRecord::Schema.define(version: 2020_09_10_213902) do
   add_foreign_key "seller_versions", "seller_versions", column: "next_version_id"
   add_foreign_key "seller_versions", "sellers"
   add_foreign_key "seller_versions", "users", column: "edited_by_id"
-  add_foreign_key "sellers", "users", column: "owner_id"
 end

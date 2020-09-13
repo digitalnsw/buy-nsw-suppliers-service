@@ -25,13 +25,17 @@ module SellerService
           mark_document_as_rejected(seller, doc)
         end
 
-        mailer = DocumentExpiryMailer.with(seller: seller, alerts: expiry_service.documents_serializable)
-
         if expiry_service.just_expired_documents.any? || (d > 0 && d == 28)
-          mailer.document_expired_email.deliver_later
+          DocumentExpiryMailer.deliver_many(:document_expired_email, {
+            seller: seller,
+            alerts: expiry_service.documents_serializable
+          })
           stats[:expired] += 1
         elsif expiry_service.alerting_documents.any?
-          mailer.document_expiring_soon_email.deliver_later
+          DocumentExpiryMailer.deliver_many(:document_expiring_soon_email, {
+            seller: seller,
+            alerts: expiry_service.documents_serializable
+          })
           stats[:expiring] += 1
         end
       end

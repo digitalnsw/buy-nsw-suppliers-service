@@ -126,11 +126,11 @@ module SellerService
           u.roles << 'seller' unless u.is_seller? || u.is_buyer?
           u.seller_id ||= sv.seller_id
           u.seller_ids |= [sv.seller_id]
+          u.grant! sv.seller_id, :owner
 
           u.skip_confirmation_notification!
           u.save!
           
-          s.owner_id ||= u.id
           s.save!
         end
       end

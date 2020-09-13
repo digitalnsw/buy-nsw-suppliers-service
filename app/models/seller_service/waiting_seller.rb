@@ -64,9 +64,9 @@ module SellerService
 
     scope :in_invitation_state, ->(state) { where(invitation_state: state) }
 
-    def create_seller!(owner_id)
+    def create_seller!
       SellerService::Seller.transaction do
-        seller = SellerService::Seller.create!(owner_id: owner_id)
+        seller = SellerService::Seller.create!
         num_emp_h = {
           "0-19" => '5to19',
           "20-100" => '50to99',

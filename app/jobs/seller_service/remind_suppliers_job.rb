@@ -20,25 +20,35 @@ module SellerService
 
         next if d <= 0 || d % 28 != 0
 
-        mailer = RemindSupplierMailer.with(seller: seller)
-
         if seller.status == :started
-          mailer.reminder_to_register_email.deliver_later
+          RemindSupplierMailer.deliver_many(:reminder_to_register_email, {
+            seller: seller
+          })
           reminded_to_register += 1
         elsif seller.status == :draft
-          mailer.reminder_to_complete_email.deliver_later
+          RemindSupplierMailer.deliver_many(:reminder_to_complete_email, {
+            seller: seller
+          })
           reminded_to_complete += 1
         elsif seller.status == :changes_requested
-          mailer.reminder_to_review_email.deliver_later
+          RemindSupplierMailer.deliver_many(:reminder_to_review_email, {
+            seller: seller
+          })
           reminded_to_review += 1
         elsif seller.status == :live && d == 28
-          mailer.reminder_to_update_profile_email.deliver_later
+          RemindSupplierMailer.deliver_many(:reminder_to_update_profile_email, {
+            seller: seller
+          })
           reminded_to_update_profile += 1
         elsif seller.status == :amendment_draft && d == 28
-          mailer.reminder_to_complete_email.deliver_later
+          RemindSupplierMailer.deliver_many(:reminder_to_complete_email, {
+            seller: seller
+          })
           reminded_to_complete += 1
         elsif seller.status == :amendment_changes_requested && d == 28
-          mailer.reminder_to_review_email.deliver_later
+          RemindSupplierMailer.deliver_many(:reminder_to_review_email, {
+            seller: seller
+          })
           reminded_to_review += 1
         end
 

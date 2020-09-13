@@ -11,7 +11,7 @@ module SellerService
         expired:  0,
       }
 
-      Seller.live.each do |seller|
+      SellerService::Seller.live.each do |seller|
 
         next unless seller.status == :live
 

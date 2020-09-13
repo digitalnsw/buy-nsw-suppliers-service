@@ -6,7 +6,7 @@ module SellerService
       reminded_to_review = 0
       reminded_to_update_profile = 0
 
-      Seller.all.each do |seller|
+      SellerService::Seller.all.each do |seller|
 
         if seller.status == :live
           profile = seller.profile_versions.order(id: :desc).first

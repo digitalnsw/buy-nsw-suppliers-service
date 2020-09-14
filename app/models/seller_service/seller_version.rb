@@ -135,6 +135,18 @@ module SellerService
       seller.events
     end
 
+    def self.ranked
+      from <<-SQL.strip_heredoc
+        (SELECT *, row_number() OVER (
+        PARTITION BY seller_id
+        ORDER BY id DESC
+        ) FROM seller_versions
+        WHERE state<>'archived') AS seller_versions
+        SQL
+    end
+
+    scope :latest, -> { ranked.where('seller_versions.row_number = 1') }
+
     scope :for_review,        ->            { where(state: :pending) }
 
     scope :unassigned,        ->            { where('assigned_to_id IS NULL') }

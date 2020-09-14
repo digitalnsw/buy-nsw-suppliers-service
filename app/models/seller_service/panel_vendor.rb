@@ -119,7 +119,8 @@ module SellerService
             # import even if registered user is suspended
             u = ::User.find_by(uuid: row['RegisteredUserUUID'])
             u ||= ::User.find_or_initialize_by(email: row['RegisteredUserEmail'].downcase)
-            name = (row['RegisteredUserGivenName'].to_s + ' ' + row['RegisteredUserSurname'].to_s).strip
+            name = (row['RegisteredUserGivenName'].to_s + ' ' + row['RegisteredUserSurname'].to_s).
+              gsub(/[()]/, '').gsub(/ +/, ' ').strip
             u.full_name ||= name if name.present?
             u.password = u.password_confirmation = SecureRandom.hex(32) unless u.persisted?
 
@@ -138,7 +139,7 @@ module SellerService
           Airbrake.notify_sync(e.message, {
             RUUUID: row['RegisteredUserUUID'],
             PVUUID: row['PanelVendorUUID'],
-            trace: e.backtrace[0..5],
+            trace: e.backtrace.select{|l|l.match?(/buy-nsw/)},
           })
         end
       end

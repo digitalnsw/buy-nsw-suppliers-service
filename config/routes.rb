@@ -2,7 +2,6 @@ SellerService::Engine.routes.draw do
   resources :sellers do
     get :steps, on: :collection
     get :alerting_documents, on: :collection
-    get :companies, on: :collection
     get :all_services, on: :member
     post :submit, on: :member
     post :cancel, on: :member

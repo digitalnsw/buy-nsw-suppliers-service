@@ -5,7 +5,7 @@ module SellerService
     skip_before_action :verify_authenticity_token, raise: false, only: [:approve, :decline, :assign]
     before_action :authenticate_service, only: [:approve, :decline, :assign, :destroy]
     before_action :authenticate_service_or_user, only: [:show, :all_services]
-    before_action :authenticate_user, except: [:show, :all_services, :approve, :decline, :assign, :companies]
+    before_action :authenticate_user, except: [:show, :all_services, :approve, :decline, :assign]
     before_action :set_seller, only: [:show, :update, :destroy, :all_services]
     before_action :set_seller_by_id, only: [:approve, :decline, :assign]
 
@@ -32,14 +32,6 @@ module SellerService
       update_session_user(seller_id: @seller.id, seller_status: @seller.status)
 
       render json: serializer.show, status: :created, location: @seller, root: true
-    end
-
-    def companies
-      #FIXME: return list of suppliers and build the key/label hash in the front
-      ids = session_user&.seller_ids
-      render json: SellerService::SellerVersion.latest.where(seller_id: ids).map { |v|
-        { key: v.seller_id, label: 'ID: ' + v.seller_id.to_s + ' - Name: ' + v.name.to_s + ' (created at: ' + v.seller.created_at.to_s + ')' }
-      }
     end
 
     def schemes
@@ -78,6 +70,9 @@ module SellerService
         raise SharedModules::MethodNotAllowed unless session_user&.is_seller?
         @seller = SellerService::Seller.where(id: session_user.seller_id).first
         render json: serializer.show
+      elsif params[:myProfiles]
+        @sellers = SellerService::Seller.where(id: session_user&.seller_ids)
+        render json: serializer.index
       else
         render json: {}
       end

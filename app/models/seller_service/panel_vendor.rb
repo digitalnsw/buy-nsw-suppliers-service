@@ -55,7 +55,7 @@ module SellerService
           pv.fields = row
           pv.save!
 
-          abn = row['ABN']
+          abn = row['ABN'].gsub('-', '')
 
           next unless abn.present? && ABN.valid?(abn)
           abn = ABN.new(abn).to_s

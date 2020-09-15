@@ -412,8 +412,6 @@ module SellerService
         create_event(user, "Seller self approved by #{user.email}")
       end
 
-      UserService::SyncTendersJob.perform_later user.id
-
       "Seller submitted by #{user.email}."
     end
 

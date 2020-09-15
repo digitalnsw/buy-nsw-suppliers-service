@@ -107,6 +107,7 @@ module SellerService
 
     def submit
       run_operation(:submit)
+      UserService::SyncTendersTeamJob.perform_later @seller.id
     end
 
     def cancel

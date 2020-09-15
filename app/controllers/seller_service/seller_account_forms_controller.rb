@@ -26,7 +26,7 @@ module SellerService
         form.save(@seller.draft_version)
         form.update_field_statuses(@seller)
 
-        UserService::SyncTendersJob.perform_later session_user.id
+        UserService::SyncTendersTeamJob.perform_later @seller.id
       else
         render json: { errors: [ form.rejections(@seller).merge(form.validation_errors) ] }, status: :unprocessable_entity
       end

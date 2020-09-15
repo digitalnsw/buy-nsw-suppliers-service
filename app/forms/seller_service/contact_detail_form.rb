@@ -79,6 +79,7 @@ module SellerService
         ["suburb", "address", "address_2", "address_3", "postcode", "country", "state"].each do |field|
           address[field] = '' if address[field].nil?
         end
+        address['state'] = 'outside_au' if address['country'].upcase != 'AU'
       end
       if same_as_above.present?
         self.representative_first_name = self.contact_first_name

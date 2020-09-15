@@ -53,6 +53,7 @@ module SellerService::Account
         ["suburb", "address", "address_2", "address_3", "postcode", "country", "state"].each do |field|
           address[field] = '' if address[field].nil?
         end
+        address['state'] = 'outside_au' if address['country'].upcase != 'AU'
       end
       country = addresses.present? && addresses.first['country'].upcase
       self.regional = false unless postcode_in_regional_range && country == 'AU'

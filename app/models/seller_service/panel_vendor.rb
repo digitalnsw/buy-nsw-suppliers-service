@@ -60,16 +60,12 @@ module SellerService
           next unless abn.present? && ABN.valid?(abn)
           abn = ABN.new(abn).to_s
 
-          seller = ::SellerService::Seller.find_by(uuid: row['PanelVendorUUID'])
-
-          if seller.nil?
-						sv = SellerVersion.where(state: [:draft, :pending, :approved], abn: abn).first
-            seller = sv&.seller
-          end
-
+          sv = SellerVersion.where(state: [:pending, :approved], abn: abn).first
+          sv ||= SellerVersion.where(abn: abn).where.not(state: :archived, uuid: nil).first
 
           SellerService::Seller.transaction do
-            if seller
+            if sv
+              seller = sv.seller
               seller.update_attributes!(uuid: pv.uuid) if seller.uuid.nil?
             else
               seller = SellerService::Seller.create!(state: :draft, uuid: pv.uuid)
@@ -79,7 +75,7 @@ module SellerService
                 started_at: Time.now,
 
                 name: row['CompanyName'] || '',
-                abn: pv.abn,
+                abn: abn,
                 abn_exempt: abn_ex_h[row['ABNExempt']],
                 abn_exempt_reason: row['ABNExemptReason'] || '',
                 indigenous: row['IsATSIOwned'].to_i == 1,
@@ -129,9 +125,9 @@ module SellerService
 
             u.uuid = row['RegisteredUserUUID']
             u.roles << 'seller' unless u.is_seller? || u.is_buyer?
-            u.seller_id ||= seller.id
-            u.seller_ids |= [seller.id]
-            u.grant seller.id, :owner
+            u.seller_id ||= sv.seller_id
+            u.seller_ids |= [sv.seller_id]
+            u.grant sv.seller_id, :owner
 
             u.skip_confirmation_notification!
             u.save!

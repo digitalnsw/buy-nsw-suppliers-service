@@ -36,7 +36,7 @@ module SellerService
     end
 
     def owners
-      SharedResources::RemoteUser.get_owners(seller_id: id).map(&:attributes)
+      SharedResources::RemoteUser.get_owners(id).map(&:attributes)
     end
 
     def events

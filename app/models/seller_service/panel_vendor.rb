@@ -61,14 +61,14 @@ module SellerService
           abn = ABN.new(abn).to_s
 
           s = ::SellerService::Seller.find_by(uuid: row['PanelVendorUUID'])
-          next if s.present?
 
-          sv = SellerVersion.where(state: [:pending, :approved], abn: abn).first
-          s = sv&.seller;
+          sv = SellerVersion.where(state: [:draft, :pending, :approved], abn: abn).first if s.nil?
+
+          s ||= sv&.seller
 
           SellerService::Seller.transaction do
             if sv
-              s.uuid = pv.uuid
+              s.uuid ||= pv.uuid
               # TODO: start amendment and add category and address
             else
               s = SellerService::Seller.create!(state: :draft, uuid: pv.uuid)
@@ -114,7 +114,7 @@ module SellerService
               })
 
             end
-            sv.save!
+            sv.save! if sv.present?
 
             # import even if registered user is suspended
             u = ::User.find_by(uuid: row['RegisteredUserUUID'])
@@ -126,9 +126,9 @@ module SellerService
 
             u.uuid = row['RegisteredUserUUID']
             u.roles << 'seller' unless u.is_seller? || u.is_buyer?
-            u.seller_id ||= sv.seller_id
-            u.seller_ids |= [sv.seller_id]
-            u.grant sv.seller_id, :owner
+            u.seller_id ||= s.id
+            u.seller_ids |= [s.id]
+            u.grant s.id, :owner
 
             u.skip_confirmation_notification!
             u.save!

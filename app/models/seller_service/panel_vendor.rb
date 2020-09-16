@@ -50,7 +50,7 @@ module SellerService
         begin
           next if row['PanelVendorUUID'].blank? || row['ABN'].blank? || row['Email'].blank?
           pv = PanelVendor.find_or_initialize_by(uuid: row['PanelVendorUUID'])
-          pv.abn = ABN.new(row['ABN']).to_s
+          pv.abn = ABN.new(row['ABN'].gsub('-', '')).to_s
           pv.email = row['Email'].downcase
           pv.fields = row
           pv.save!

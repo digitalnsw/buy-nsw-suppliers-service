@@ -60,20 +60,21 @@ module SellerService
           next unless abn.present? && ABN.valid?(abn)
           abn = ABN.new(abn).to_s
 
-          s = ::SellerService::Seller.find_by(uuid: row['PanelVendorUUID'])
+          seller = ::SellerService::Seller.find_by(uuid: row['PanelVendorUUID'])
 
-          sv = SellerVersion.where(state: [:draft, :pending, :approved], abn: abn).first if s.nil?
+          if seller.nil?
+						sv = SellerVersion.where(state: [:draft, :pending, :approved], abn: abn).first
+            seller = sv&.seller
+          end
 
-          s ||= sv&.seller
 
           SellerService::Seller.transaction do
-            if sv
-              s.uuid ||= pv.uuid
-              # TODO: start amendment and add category and address
+            if seller
+              seller.update_attributes!(uuid: pv.uuid) if seller.uuid.nil?
             else
-              s = SellerService::Seller.create!(state: :draft, uuid: pv.uuid)
-              sv = SellerService::SellerVersion.new({
-                seller_id: s.id,
+              seller = SellerService::Seller.create!(state: :draft, uuid: pv.uuid)
+              sv = SellerService::SellerVersion.create!({
+                seller_id: seller.id,
                 state: :draft,
                 started_at: Time.now,
 
@@ -90,7 +91,8 @@ module SellerService
                     suburb: row["City"] || '',
                     postcode: row["Postcode"] || '',
                     state: convert_state(row),
-                    country: ISO3166::Country.find_country_by_name(row["Country"])&.un_locode || '',
+                    country: ISO3166::Country.find_country_by_name(
+                             row["Country"])&.un_locode || '',
                   }
                 ],
 
@@ -110,11 +112,12 @@ module SellerService
                 australia_employees: num_emp_h[row["SMEStatus"]] || '',
                 nsw_employees: num_emp_h[row["SMEStatus"]] || '',
                 website_url: row["WebAddress"] || '',
-                establishment_date: (Date.parse(row["Date_Established"]).to_s.gsub(/&lt;[^&]*&gt;/, '') rescue ''),
+                establishment_date: (
+                  Date.parse(row["Date_Established"]).to_s.
+                  gsub(/&lt;[^&]*&gt;/, '') rescue ''
+                ),
               })
-
             end
-            sv.save! if sv.present?
 
             # import even if registered user is suspended
             u = ::User.find_by(uuid: row['RegisteredUserUUID'])
@@ -126,14 +129,12 @@ module SellerService
 
             u.uuid = row['RegisteredUserUUID']
             u.roles << 'seller' unless u.is_seller? || u.is_buyer?
-            u.seller_id ||= s.id
-            u.seller_ids |= [s.id]
-            u.grant s.id, :owner
+            u.seller_id ||= seller.id
+            u.seller_ids |= [seller.id]
+            u.grant seller.id, :owner
 
             u.skip_confirmation_notification!
             u.save!
-
-            s.save!
           end
         rescue => e
           Airbrake.notify_sync(e.message, {

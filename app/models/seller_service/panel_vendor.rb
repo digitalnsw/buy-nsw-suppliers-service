@@ -61,7 +61,7 @@ module SellerService
           abn = ABN.new(abn).to_s
 
           sv = SellerVersion.where(state: [:pending, :approved], abn: abn).first
-          sv ||= SellerVersion.where(abn: abn).where.not(state: :archived, uuid: nil).first
+          sv ||= SellerVersion.where(abn: abn).where.not(state: :archived).first
 
           SellerService::Seller.transaction do
             if sv

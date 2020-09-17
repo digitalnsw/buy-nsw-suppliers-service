@@ -24,7 +24,7 @@ module SellerService
       self.representative_email.downcase! if representative_email.present?
       if agreed
         if agreed_by
-          self.agreed_by_email = agreed_by['email']
+          self.agreed_by_email = agreed_by.email
         else
           self.agreed = nil
           self.agreed_at_date = nil
@@ -40,7 +40,7 @@ module SellerService
           if representative_email.present?
             if rep_user.nil?
               self.representative_user_status = 'not_invited'
-            elsif rep_user['seller_id'] == session_user&.seller_id
+            elsif rep_user.seller_id == session_user&.seller_id
               self.representative_user_status = 'invited'
             else
               self.representative_user_status = 'another_seller'

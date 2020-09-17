@@ -6,15 +6,8 @@ module SellerService
     field :contact_phone
     field :contact_position
 
-    field :representative_first_name
-    field :representative_last_name
-    field :representative_email
-    field :representative_phone
-    field :representative_position
     field :regional
     field :corporate_structure
-
-    field :same_as_above, usage: :front_end
 
     field :addresses, type: :json
 
@@ -23,11 +16,6 @@ module SellerService
     validates :contact_email, format: { with: URI::MailTo::EMAIL_REGEXP }
     validates :contact_phone, format: { with: /\A(\+)?[0-9 ()\-]{3,20}\z/ }
     validates :contact_position, format: { with: /\A[A-Za-z .'\-]+\z/ }
-    validates :representative_first_name, format: { with: /\A[A-Za-z .'\-]+\z/ }
-    validates :representative_last_name, format: { with: /\A[A-Za-z .'\-]+\z/ }
-    validates :representative_email, format: { with: URI::MailTo::EMAIL_REGEXP }
-    validates :representative_phone, format: { with: /\A(\+)?[0-9 ()\-]{3,20}\z/ }
-    validates :representative_position, format: { with: /\A[A-Za-z .'\-]+\z/ }
 
     validates :addresses, 'shared_modules/json': { schema:
       [
@@ -64,7 +52,6 @@ module SellerService
     end
 
     def after_load
-      self.same_as_above = false
       if addresses.blank?
         self.addresses = [{"suburb"=>"", "address"=>"", "address_2"=>"", "address_3"=>"", "postcode"=>"", "country"=>"", "state"=>""}]
       end
@@ -73,20 +60,12 @@ module SellerService
     end
 
     def before_save
-      self.representative_email.downcase! if representative_email.present?
       self.contact_email.downcase! if contact_email.present?
       addresses.each do |address|
         ["suburb", "address", "address_2", "address_3", "postcode", "country", "state"].each do |field|
           address[field] = '' if address[field].nil?
         end
         address['state'] = 'outside_au' if address['country'].upcase != 'AU'
-      end
-      if same_as_above.present?
-        self.representative_first_name = self.contact_first_name
-        self.representative_last_name = self.contact_last_name
-        self.representative_email = self.contact_email
-        self.representative_phone = self.contact_phone
-        self.representative_position = self.contact_position
       end
       country = addresses.present? && addresses.first['country'].upcase
       self.regional = false unless postcode_in_regional_range && country == 'AU'
@@ -99,11 +78,6 @@ module SellerService
         :contact_email,
         :contact_phone,
         :contact_position,
-        :representative_first_name,
-        :representative_last_name,
-        :representative_email,
-        :representative_phone,
-        :representative_position,
       ].any? do |field|
         send(field).present? || send(field) == false
       end

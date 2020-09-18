@@ -25,7 +25,7 @@ module SellerService
         SellerService::Seller.transaction do
           @seller = SellerService::Seller.new(state: :draft)
           @seller.save!
-          SharedResources::RemoteUser.update_seller(session_user.id, @seller.id)
+          SharedResources::RemoteUser.add_to_team(session_user.id, @seller.id)
           @seller.versions.create!(state: :draft, name: '', started_at: Time.now)
         end
       end

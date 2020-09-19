@@ -21,6 +21,7 @@ module SellerService
       @seller.run_action(:revise, user: session_user) if @seller.status == :amendment_changes_requested
       key = params.keys.find{|k|k.to_s.starts_with?("sellerAccount/")}
       form = form_class.new params[key], @seller.draft_version
+      form.session_user = session_user
       if form.valid?
         render json: serialize(form), status: :created
         form.save(@seller.draft_version)
@@ -38,6 +39,7 @@ module SellerService
 
     def show
       form = form_class.new
+      form.session_user = session_user
       form.load @seller.latest_version
       form.valid?
       render json: serialize(form)

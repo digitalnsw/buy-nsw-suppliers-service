@@ -1,5 +1,6 @@
 module SellerService::Account
   class AuditableForm < SellerService::BaseForm
+
     def update_field_statuses(seller)
       (two_way_fields+back_end_fields).each do |field|
         if feedback_fields.include?(field) &&

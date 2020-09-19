@@ -4,6 +4,7 @@ module SellerService
     field :abn
     field :establishment_date, type: :date
     field :seller_id, usage: :back_end
+    field :can_join, usage: :front_end
 
     validates_presence_of :name
     validates :name, format: { with: /\A[A-Za-z0-9 .,'":;+~*\-_|()@#$%&\/\s]{0,1000}\z/ }
@@ -18,10 +19,24 @@ module SellerService
       end
     end
 
+    def abn_taken?
+      abn.present? && ABN.valid?(abn.gsub(/\s+/, "")) &&
+        SellerService::SellerVersion.where.not(seller_id: seller_id).
+        where(state: [:pending, :approved], abn: ABN.new(abn).to_s).exists?
+    end
+
+    def can_join?
+      abn.present? && ABN.valid?(abn.gsub(/\s+/, "")) &&
+        SellerService::SellerVersion.where.not(seller_id: session_user&.seller_ids).
+        where(state: [:pending, :approved], abn: ABN.new(abn).to_s).exists?
+    end
+
     def abn_uniqueness
-      if abn.present? && ABN.valid?(abn.gsub(/\s+/, "")) &&
-        SellerService::SellerVersion.where.not(seller_id: seller_id).where(state: [:approved, :pending], abn: abn).exists?
+      if abn_taken?
         errors.add(:abn, "This ABN is not unique, you or someone from your company may have already created an account with us.")
+      end
+      if can_join?
+        errors.add(:can_join, true)
       end
     end
 

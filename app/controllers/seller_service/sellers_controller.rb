@@ -5,7 +5,7 @@ module SellerService
     skip_before_action :verify_authenticity_token, raise: false, only: [:approve, :decline, :assign]
     before_action :authenticate_service, only: [:approve, :decline, :assign, :destroy]
     before_action :authenticate_service_or_user, only: [:show, :all_services]
-    before_action :authenticate_user, except: [:show, :all_services, :approve, :decline, :assign]
+    before_action :authenticate_user, except: [:show, :all_services, :approve, :decline, :assign, :join]
     before_action :set_seller, only: [:show, :update, :destroy, :all_services]
     before_action :set_seller_by_id, only: [:approve, :decline, :assign]
 
@@ -150,6 +150,44 @@ module SellerService
     def assign
       run_admin_operation(:assign)
       render json: { success: true }
+    end
+
+    def join
+      abn = ABN.new(params[:abn]).to_s
+      sv = SellerService::SellerVersion.where(state: ['approved', 'pending'], abn: abn).
+        where.not(seller_id: session_user.seller_ids).first
+
+      raise SharedModules::AlertError.new('Invalid ABN!') if abn.blank?
+
+      raise SharedModules::AlertError.new('Your join request was not sent! Are you already a member?') if sv.blank?
+
+      owners = SharedResources::RemoteUser.get_owners(sv.seller_id)
+
+      raise SharedModules::AlertError.new('Your join request was not sent. There is no one to approve it!') if owners.empty?
+
+      SharedResources::RemoteNotification.create_notification(
+        unifier: 'join_' + session_user.id.to_s + '_to_' + sv.seller_id.to_s,
+        recipients: owners.map(&:id),
+        subject: "#{current_user.full_name || current_user.email} requested to join your supplier team",
+        body: "By accepting this request #{current_user.full_name || current_user.email} will be able to update your company profile.",
+        actions: [
+          {
+            key: 'accept',
+            caption: 'Accept',
+            resource: 'remote_user',
+            method: 'add_to_team',
+            params: [session_user.id, sv.seller_id],
+            success_message: 'join_request_accepted',
+          },
+          {
+            key: 'decline',
+            caption: 'Decline',
+            button_class: 'button-secondary',
+            success_message: 'join_request_declined',
+          },
+        ]
+      )
+      render json: {}, status: :created
     end
 
     private

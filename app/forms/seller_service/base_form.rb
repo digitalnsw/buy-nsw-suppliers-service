@@ -3,6 +3,8 @@ module SellerService
     include ActiveModel::Validations
     include SharedModules::Serializer
 
+    attr_accessor :session_user
+
     # This loads fields from form
     def initialize(fields_hash = {}, version = nil)
       if version

@@ -15,6 +15,7 @@ SellerService::Engine.routes.draw do
     post :deactivate, on: :member
     get :active_sellers, on: :collection
     get :schemes, on: :collection
+    post :join, on: :collection
   end
 
   resources :seller_forms, only: [:update, :index], path: "seller_form/:form_name"

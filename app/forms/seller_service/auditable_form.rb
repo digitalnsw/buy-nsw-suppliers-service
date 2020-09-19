@@ -1,6 +1,5 @@
 module SellerService
   class AuditableForm < SellerService::BaseForm
-    attr_accessor :session_user
 
     # This saves fields to DB
     def update_field_statuses(seller)

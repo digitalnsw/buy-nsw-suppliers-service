@@ -19,24 +19,36 @@ module SellerService
       end
     end
 
+    def abn_owner
+      @abn_owner ||= SellerService::SellerVersion.where.not(seller_id: seller_id).
+        where(state: [:pending, :approved], abn: ABN.new(abn).to_s).first
+    end
+
+    def pending_join?
+      return false if abn_owner.blank?
+      return @pending_join if @pending_join != nil
+      unifier = 'join_' + session_user.id.to_s + '_to_' + abn_owner.id.to_s
+      @pending_join = SharedResources::RemoteNotification.pending_notification?(unifier: unifier)
+    end
+
     def abn_taken?
-      abn.present? && ABN.valid?(abn.gsub(/\s+/, "")) &&
-        SellerService::SellerVersion.where.not(seller_id: seller_id).
-        where(state: [:pending, :approved], abn: ABN.new(abn).to_s).exists?
+      abn.present? && ABN.valid?(abn.gsub(/\s+/, "")) && abn_owner.present?
     end
 
     def can_join?
-      abn.present? && ABN.valid?(abn.gsub(/\s+/, "")) &&
-        SellerService::SellerVersion.where.not(seller_id: session_user&.seller_ids).
-        where(state: [:pending, :approved], abn: ABN.new(abn).to_s).exists?
+      abn_taken? && session_user&.seller_ids.exclude?(abn_owner.seller_id)
     end
 
     def abn_uniqueness
       if abn_taken?
-        errors.add(:abn, "This ABN is not unique, you or someone from your company may have already created an account with us.")
-      end
-      if can_join?
-        errors.add(:can_join, true)
+        if pending_join?
+          errors.add(:abn, "This ABN is not unique, you have sent a request to joing this supplier.")
+        else
+          errors.add(:abn, "This ABN is not unique, you or someone from your company may have already created an account with us.")
+        end
+        if can_join? && !pending_join?
+          errors.add(:can_join, true)
+        end
       end
     end
 

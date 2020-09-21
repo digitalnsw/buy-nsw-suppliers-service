@@ -16,7 +16,6 @@ module SellerService::Account
     field :sub_categories, type: :json, usage: :front_end
 
     field :services, type: :json
-    # field :level_3_services, type: :json, usage: :back_end
 
     validates_presence_of :services
     validates :services, 'shared_modules/json': { schema: [
@@ -55,8 +54,7 @@ module SellerService::Account
       self.sme = false if number_of_employees == '200plus' || overseas
       self.start_up = false unless establishment_date_in_range
 
-      self.services = (level_1_services + level_2_services + level_3_services) |
-        ['information-technology']
+      self.services = (level_1_services | level_2_services | level_3_services)
     end
   end
 end

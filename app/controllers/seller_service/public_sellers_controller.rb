@@ -88,8 +88,6 @@ module SellerService
     end
 
     def category_services
-      # FIXME: Below line is added for early release
-      params[:category] = 'information-technology' if params[:category].blank?
       if params[:category].in?(SellerService::SellerVersion.level_1_services)
         SellerService::SellerVersion.service_levels[params[:category]].keys
       elsif params[:category].in?(SellerService::SellerVersion.level_2_services)
@@ -128,9 +126,7 @@ module SellerService
     end
 
     def top_categories
-      # FIXME: Below line is commented for early release
-      # l = SellerService::SellerVersion.service_levels.keys
-      l = SellerService::SellerVersion.service_levels['information-technology'].keys
+      l = SellerService::SellerVersion.service_levels.keys
       render json: l.map{|k| {key: k, label: 'friendly'}}
     end
 

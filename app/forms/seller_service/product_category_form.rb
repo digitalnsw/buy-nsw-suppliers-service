@@ -7,7 +7,6 @@ module SellerService
     ] }
 
     field :sub_categories, type: :json, usage: :front_end
-    # field :level_3_services, type: :json, usage: :back_end
 
     def after_load
       self.sub_categories = SellerService::SellerVersion.flat_sub_categories
@@ -29,8 +28,7 @@ module SellerService
     end
 
     def before_save
-      self.services = (level_1_services + level_2_services + level_3_services) |
-        ['information-technology']
+      self.services = (level_1_services | level_2_services | level_3_services)
     end
   end
 end

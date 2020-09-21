@@ -182,8 +182,8 @@ module SellerService
     SERVICE_LEVELS = {
       'community-and-social-services' => {
         'bushfire-affected-communities-rebuild' => [
-#         'agency,-government-or-private-buyer',
-#         'building-works,-associated-trades-and-materials',
+#         'agency-government-or-private-buyer',
+#         'building-works-associated-trades-and-materials',
 #         'health',
 #         'hospitality',
 #         'native-wildlife',
@@ -191,7 +191,7 @@ module SellerService
         ],
       },
       'construction' => {
-        'construction-under-$1-million' => [
+        'construction-under-1-million' => [
           'construction-works',
           'building-services',
           'trades',
@@ -201,7 +201,7 @@ module SellerService
           'structural-engineer',
           'landscape-specialist',
           'interiors',
-          'archaeologist-/-excavation-director',
+          'archaeologist-excavation-director',
           'research-and-support-archaeologist',
           'heritage-interpretation',
           'historian',
@@ -209,13 +209,13 @@ module SellerService
           'materials-testing',
           'other-heritage-consultants',
         ],
-        'land,-housing,-residential' => [
+        'land-housing-residential' => [
           'new-construction-projects',
           'building-upgrade-projects',
         ],
       },
       'educational-supplies' => {},
-      'engineering,-research-and-technology-services' => {
+      'engineering-research-and-technology-services' => {
         'remote-sensing-services-and-equipment' => [
           'aircraft-services',
           'data-and-processing',
@@ -235,18 +235,18 @@ module SellerService
         'motor-vehicles' => [
 #         'buses',
 #         'heavy-commercial',
-#         'P/U-C/C-4x2',
-#         'C/C-C/C-4x4',
+#         'pu-cc-4x2',
+#         'cc-cc-4x4',
 #         'passenger-large',
 #         'passenger-light',
 #         'passenger-medium',
 #         'passenger-small',
 #         'passenger-upper-large',
 #         'people-mover',
-#         'SUV-large',
-#         'SUV-medium',
-#         'SUV-small',
-#         'vans/CC',
+#         'suv-large',
+#         'suv-medium',
+#         'suv-small',
+#         'vans/cc',
         ]
       },
       'food' => {},
@@ -261,22 +261,21 @@ module SellerService
           'finance',
           'specialist',
           'industrial',
-          'industrial-(ACT)',
+          'industrial-act',
           'technical',
-          'ICT-network-and-equipment',
-          'ICT-management',
-          'ICT-applications',
+          'ict-network-and-equipment',
+          'ict-management',
+          'ict-applications',
           'transport',
           'rail-specific-project-management',
           'rail-specific-engineering',
           'rail-specific-design-and-architecture',
           'rail-specific-infrastructure',
-          'rail-specific-infrastructure',
           'safety-legal',
           'education',
           'other-contingent-workforce',
-          'NSW-state-emergency-services',
-          'home-care-service-of-NSW',
+          'nsw-state-emergency-services',
+          'home-care-service-of-nsw',
         ],
         'talent-acquisition' => [
           'design-and-delivery-of-assessments',
@@ -287,8 +286,8 @@ module SellerService
       },
       'information-communications-technology' => {
         'advisory-and-consulting' => [
-#         'strategy,-planning,-policy-and-risk',
-#         'audits,-compliance-and-assurance',
+#         'strategy-planning-policy-and-risk',
+#         'audits-compliance-and-assurance',
 #         'project-and-change-management',
 #         'training-and-development',
         ],
@@ -299,14 +298,14 @@ module SellerService
         ],
         'end-user-computing-and-peripherals' => [
 #         'desktops-workstations-and-thin-clients',
-#         'laptops,-tablets-and-hybrids',
-#         'printers,-screens-and-monitors',
-#         'peripherals,-accessories-and-other-end-user-computing-products',
+#         'laptops-tablets-and-hybrids',
+#         'printers-screens-and-monitors',
+#         'peripherals-accessories-and-other-end-user-computing-products',
 #         'end-user-computing-support',
         ],
         'infrastructure-and-network' => [
 #         'modems-and-routers',
-#         'switches,-servers-and-storage',
+#         'switches-servers-and-storage',
 #         'racks-and-cables',
 #         'other-networking-products',
 #         'network-and-security-support',
@@ -320,9 +319,9 @@ module SellerService
         ],
         'software-design-and-development' => [
 #         'digital-design',
-#         'software-development,-integration-and-implementation',
+#         'software-development-integration-and-implementation',
 #         'mobile-applications-development',
-#         'system-and-software-testing,-UAT-and-assurance',
+#         'system-and-software-testing-uat-and-assurance',
 #         'system-architecture',
         ],
         'software-licensing-and-maintenance' => [
@@ -343,8 +342,8 @@ module SellerService
         ],
       },
       'marketing-and-advertising' => {
-        'editorial,-copy-writing' => [],
-        'design,-graphic,-fine-art' => [],
+        'editorial-copy-writing' => [],
+        'design-graphic-fine-art' => [],
         'advertising-and-digital-communications' => [
           'market-research',
           'advertisement-strategy',
@@ -352,7 +351,7 @@ module SellerService
           'public-relations',
           'social-media',
           'indigenous-communications-and-engagement',
-          'CALD-communications-and-engagement',
+          'clad-communications-and-engagement',
           'visual-communications',
           'written-communications',
           'digital-communications',
@@ -371,7 +370,7 @@ module SellerService
           'project-management',
           'change-management',
           'financial-services',
-          'audit,-quality-assurance-and-risk',
+          'audit-quality-assurance-and-risk',
           'taxation',
           'human-resources',
           'procurement-and-supply-chain',
@@ -395,11 +394,11 @@ module SellerService
         'statutory-appointments' => [
 #         'conveyancers-licensing-manager',
 #         'conveyancers-licensing-receiver',
-#         'property,-stock-and-business-accounts-examiner',
-#         'property,-stock-and-business-manager',
-#         'property,-stock-and-business-receiver',
+#         'property-stock-and-business-accounts-examiner',
+#         'property-stock-and-business-manager',
+#         'property-stock-and-business-receiver',
         ],
-        'subsidence-advisory-NSW-independent-assessment' => [
+        'subsidence-advisory-nsw-independent-assessment' => [
 #         'building-inspector-and-estimator',
 #         'civil-engineering',
 #         'environmental-studies',
@@ -441,7 +440,7 @@ module SellerService
 #      'utilities' => {
 #        'energy-efficiency-services' => [],
 #        'rolling-stock-engineering-and-specialist-services' => [],
-#        'solar-PPA' => [],
+#        'solar-ppa' => [],
 #      },
     }
 

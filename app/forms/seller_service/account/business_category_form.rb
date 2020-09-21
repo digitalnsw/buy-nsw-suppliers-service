@@ -13,6 +13,8 @@ module SellerService::Account
 
     field :can_be_startup, usage: :front_end
     field :overseas, usage: :front_end
+
+    field :top_categories, type: :json, usage: :front_end
     field :sub_categories, type: :json, usage: :front_end
 
     field :services, type: :json
@@ -42,6 +44,7 @@ module SellerService::Account
     end
 
     def after_load
+      self.top_categories = SellerService::SellerVersion.service_levels.keys.map{|k| {key: k, label: :friendly} }
       self.sub_categories = SellerService::SellerVersion.flat_sub_categories
       self.can_be_startup = establishment_date_in_range
       self.overseas = corporate_structure == 'overseas'

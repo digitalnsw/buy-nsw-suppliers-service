@@ -6,9 +6,11 @@ module SellerService
       Set.new(SellerService::SellerVersion.all_services)
     ] }
 
+    field :top_categories, type: :json, usage: :front_end
     field :sub_categories, type: :json, usage: :front_end
 
     def after_load
+      self.top_categories = SellerService::SellerVersion.service_levels.keys.map{|k| {key: k, label: :friendly} }
       self.sub_categories = SellerService::SellerVersion.flat_sub_categories
     end
 

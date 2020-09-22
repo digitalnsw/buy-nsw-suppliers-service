@@ -108,6 +108,10 @@ module SellerService
       seller.valid_actions.include?(:assign)
     end
 
+    def read_abn
+      abn
+    end
+
     def has_approved_version?
       seller.approved_version.present?
     end

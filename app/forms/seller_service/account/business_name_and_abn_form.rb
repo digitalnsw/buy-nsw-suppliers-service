@@ -2,6 +2,8 @@ module SellerService::Account
   class BusinessNameAndAbnForm < SellerService::Account::AuditableForm
     field :name
     field :abn
+    field :read_abn, usage: :back_end
+    field :lock_abn, usage: :front_end
     field :establishment_date, type: :date
     field :seller_id, usage: :back_end
     field :can_join, usage: :front_end
@@ -12,6 +14,18 @@ module SellerService::Account
     validates_presence_of :abn
     validate :abn_format
     validate :abn_uniqueness
+
+    def seller
+      SellerService::Seller.find(seller_id)
+    end
+
+    def after_load
+      self.lock_abn = seller.uuid.present?
+    end
+
+    def before_save
+      self.abn = read_abn if seller.uuid.present?
+    end
 
     def abn_format
       if abn.present? && !ABN.valid?(abn.gsub(/\s+/, ""))

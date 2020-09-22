@@ -41,7 +41,7 @@ module SellerService
     def pending_join?
       return false if abn_owner.blank?
       return @pending_join if @pending_join != nil
-      unifier = 'join_' + session_user.id.to_s + '_to_' + abn_owner.id.to_s
+      unifier = 'join_' + session_user.id.to_s + '_to_' + abn_owner.seller_id.to_s
       @pending_join = SharedResources::RemoteNotification.pending_notification?(unifier: unifier)
     end
 

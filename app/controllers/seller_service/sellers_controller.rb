@@ -45,6 +45,7 @@ module SellerService
       forms = params[:account] ? SellerService::Seller.account_forms : SellerService::Seller.forms
       render json: (forms.map { |k, v|
         form = v.new.load(seller.latest_version)
+        form.session_user = session_user
         [k, {
           status: form.status(seller),
           optional: form.optional?

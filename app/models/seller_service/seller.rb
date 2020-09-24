@@ -240,6 +240,7 @@ module SellerService
       raise SharedModules::AlertError.new("Invalid status: #{status}.") unless has_draft?
       existing_field_statuses = field_statuses_hashed
       forms[step].fields.each do |field|
+        next unless version.respond_to? field
         if existing_field_statuses[field].nil?
          sfs =  SellerService::SellerFieldStatus.create!(seller_id: id,
             field: field, status: 'reviewed',

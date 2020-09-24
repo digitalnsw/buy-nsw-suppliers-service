@@ -235,7 +235,8 @@ module SellerService
       reload
     end
 
-    def update_field_statuses(step)
+    def update_field_statuses(step, version = nil)
+      version ||= draft_version
       raise SharedModules::AlertError.new("Invalid status: #{status}.") unless has_draft?
       existing_field_statuses = field_statuses_hashed
       forms[step].fields.each do |field|
@@ -245,7 +246,7 @@ module SellerService
             value: version.send(field).inspect)
          existing_field_statuses[sfs.field.to_sym] = sfs
         end
-        if existing_field_statuses[field] && draft_version.send(field).inspect != existing_field_statuses[field].value
+        if existing_field_statuses[field] && version.send(field).inspect != existing_field_statuses[field].value
           existing_field_statuses[field].update_attributes!(status: 'reviewed')
         end
       end

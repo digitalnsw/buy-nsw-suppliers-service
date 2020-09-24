@@ -218,19 +218,20 @@ module SellerService
       "Seller submission assigned by #{user.email} to #{props[:assignee][:email]}."
     end
 
-    def save_field_statuses(submitted_fields)
+    def save_field_statuses(submitted_fields, version = nil)
+      version ||= pending_version
       existing_field_statuses = field_statuses_hashed
       submitted_fields && submitted_fields.each do |field, decision|
         if existing_field_statuses[field.to_sym].present?
           existing_field_statuses[field.to_sym].update_attributes!(status: decision,
-              value: pending_version.send(field).inspect)
+              value: version.send(field).inspect)
         else
           SellerService::SellerFieldStatus.create!(seller_id: id,
             field: field, status: decision,
-            value: pending_version.send(field).inspect)
+            value: version.send(field).inspect)
         end
       end
-      seller_field_statuses.where.not(field: submitted_fields.keys).delete_all
+      # seller_field_statuses.where.not(field: submitted_fields.keys).delete_all
       reload
     end
 
@@ -238,6 +239,12 @@ module SellerService
       raise SharedModules::AlertError.new("Invalid status: #{status}.") unless has_draft?
       existing_field_statuses = field_statuses_hashed
       forms[step].fields.each do |field|
+        if existing_field_statuses[field].nil?
+         sfs =  SellerService::SellerFieldStatus.create!(seller_id: id,
+            field: field, status: 'reviewed',
+            value: version.send(field).inspect)
+         existing_field_statuses[sfs.field.to_sym] = sfs
+        end
         if existing_field_statuses[field] && draft_version.send(field).inspect != existing_field_statuses[field].value
           existing_field_statuses[field].update_attributes!(status: 'reviewed')
         end
@@ -245,12 +252,12 @@ module SellerService
       reload
     end
 
-    def update_pending_version
+    def update_pending_version(version = nil)
       av = approved_version
-      pv = pending_version
+      pv = version || pending_version
       rejected_fields = seller_field_statuses.select do |tag|
         tag.status != 'accepted' && av.send(tag.field) != pv.send(tag.field)
-      end.map { |tag| [tag.field.to_sym, av.send(tag.field)] }.to_h
+      end.map do |tag| [tag.field.to_sym, av.send(tag.field)] end.to_h
       pv.update_attributes!(rejected_fields) if rejected_fields.any?
     end
 
@@ -349,11 +356,6 @@ module SellerService
         :contact_email,
         :contact_phone,
         :contact_position,
-        :representative_first_name,
-        :representative_last_name,
-        :representative_email,
-        :representative_phone,
-        :representative_position,
         :addresses,
         :number_of_employees,
         :australia_employees,
@@ -377,7 +379,11 @@ module SellerService
         :investigations_details,
         :legal_proceedings,
         :legal_proceedings_details,
+      ]
+    end
 
+    def document_fields
+      [
         :financial_statement_ids,
         :financial_statement_expiry,
         :professional_indemnity_certificate_ids,
@@ -390,9 +396,52 @@ module SellerService
       ]
     end
 
+    def base_fields_edited?
+      seller_field_statuses.any? do |tag|
+        base_fields.include?(tag.field.to_sym) && tag.status != 'accepted'
+      end
+    end
+
+    def document_fields_edited?
+      seller_field_statuses.any? do |tag|
+        document_fields.include?(tag.field.to_sym) && tag.status != 'accepted'
+      end
+    end
+
+    def auto_partial_approve!
+      version = pending_version || draft_version
+
+      if document_fields_edited?
+        create_version(version, new_version_state: 'draft')
+        save_field_statuses(base_fields.map{|f| [f, 'accepted'] }.to_h, version)
+        update_pending_version(version)
+      else
+        save_field_statuses(base_fields.map{|f| [f, 'accepted'] }.to_h, version)
+      end
+
+      approved_version.archive!
+      version.submit! if version.draft?
+      version.approve!
+    end
+
+    def auto_submit!
+      draft_version.submit! if draft_version
+    end
+
+    def auto_partial_approve_or_submit! version, user
+      if base_fields_edited?
+        auto_partial_approve!
+      end
+
+      if document_fields_edited?
+        auto_submit!
+      end
+      create_event(user, "Seller self approved by #{user.email}")
+    end
+
     def auto_approve!
       create_profile(pending_version)
-      save_field_statuses(base_fields.map{|f| [f, 'accepted'] }.to_h)
+      save_field_statuses((base_fields+document_fields).map{|f| [f, 'accepted'] }.to_h)
       pending_version.approve!
       make_live!
     end

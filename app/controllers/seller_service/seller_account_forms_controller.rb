@@ -16,16 +16,26 @@ module SellerService
     end
 
     def update
-      raise SharedModules::MethodNotAllowed unless @seller.status.in? [:live, :amendment_draft, :amendment_changes_requested]
+      raise SharedModules::MethodNotAllowed unless @seller.status.in? [:live, :amendment_draft, :amendment_changes_requested, :amendment_pending]
       @seller.run_action(:start_amendment, user: session_user) if @seller.status == :live
       @seller.run_action(:revise, user: session_user) if @seller.status == :amendment_changes_requested
       key = params.keys.find{|k|k.to_s.starts_with?("sellerAccount/")}
-      form = form_class.new params[key], @seller.draft_version
+
+      version = @seller.draft_version.present? ? @seller.draft_version : @seller.pending_version
+      form = form_class.new params[key], version
       form.session_user = session_user
+
+      if form_name.in?([:insurance_document, :financial_document]) &&
+          form.status(@seller) == :pending_locked
+        raise SharedModules::MethodNotAllowed
+      end
+
       if form.valid?
         render json: serialize(form), status: :created
-        form.save(@seller.draft_version)
+        form.save(version)
         form.update_field_statuses(@seller)
+
+        @seller.auto_partial_approve_or_submit!(version, session_user)
 
         UserService::SyncTendersTeamJob.perform_later @seller.id
       else

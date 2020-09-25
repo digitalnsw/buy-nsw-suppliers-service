@@ -35,10 +35,14 @@ module SellerService
     end
 
     def abn_registered
-      if abn.present? && ABN.valid?(abn.gsub(/\s+/, ""))
+      if abn.present? && ABN.valid?(abn.gsub(/\s+/, "")) && SharedModules::Abr.active?
         r = SharedModules::Abr.lookup abn.gsub(/\s+/, "")
         if r.nil? || r[:status] != 'Active'
-          errors.add(:abn, "ABN is not registered")
+          if r[:status]
+            errors.add(:abn, "ABN registration is " + r[:status].to_s.downcase)
+          else
+            errors.add(:abn, "ABN is not registered")
+          end
         end
       end
     end

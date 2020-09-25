@@ -424,6 +424,7 @@ module SellerService
       approved_version.archive!
       version.submit! if version.draft?
       version.approve!
+      reload
     end
 
     def auto_submit!

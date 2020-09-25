@@ -21,7 +21,7 @@ module SellerService
       @seller.run_action(:revise, user: session_user) if @seller.status == :amendment_changes_requested
       key = params.keys.find{|k|k.to_s.starts_with?("sellerAccount/")}
 
-      version = @seller.draft_version.present? ? @seller.draft_version : @seller.pending_version
+      version = @seller.draft_version || @seller.pending_version
       form = form_class.new params[key], version
       form.session_user = session_user
 

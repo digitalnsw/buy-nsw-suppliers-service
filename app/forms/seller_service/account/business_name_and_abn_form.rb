@@ -13,6 +13,7 @@ module SellerService::Account
 
     validates_presence_of :abn
     validate :abn_format
+    validate :abn_registered
     validate :abn_uniqueness
 
     def seller
@@ -30,6 +31,15 @@ module SellerService::Account
     def abn_format
       if abn.present? && !ABN.valid?(abn.gsub(/\s+/, ""))
         errors.add(:abn, "ABN is not valid")
+      end
+    end
+
+    def abn_registered
+      if abn.present? && ABN.valid?(abn.gsub(/\s+/, ""))
+        r = SharedModules::Abr.lookup abn.gsub(/\s+/, "")
+        if r.nil? || r[:status] != 'Active'
+          errors.add(:abn, "ABN is not registered")
+        end
       end
     end
 

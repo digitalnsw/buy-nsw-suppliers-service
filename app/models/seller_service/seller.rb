@@ -381,13 +381,13 @@ module SellerService
         :investigations_details,
         :legal_proceedings,
         :legal_proceedings_details,
+        :financial_statement_expiry,
       ]
     end
 
     def document_fields
       [
         :financial_statement_ids,
-        :financial_statement_expiry,
         :professional_indemnity_certificate_ids,
         :professional_indemnity_certificate_expiry,
         :workers_compensation_certificate_ids,
@@ -414,7 +414,7 @@ module SellerService
       version = pending_version || draft_version
 
       if document_fields_edited?
-        create_version(version, new_version_state: 'draft')
+        create_version(version, new_version_state: 'pending')
         save_field_statuses(base_fields.map{|f| [f, 'accepted'] }.to_h, version)
         update_pending_version(version)
       else

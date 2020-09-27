@@ -1,19 +1,15 @@
 module SellerService::Profile
-  class ReputationAndDistinctionForm < SellerService::BaseForm
+  class AccreditationAndLicenseForm < SellerService::BaseForm
     field :seller_id, usage: :back_end # this is needed for the security check in docuemnt attachment
     field :accreditations, type: :json
     field :accreditation_document_ids, type: :json
     field :licenses, type: :json
     field :license_document_ids, type: :json
-    field :awards, type: :json
-    field :engagements, type: :json
 
     validates :accreditations, 'shared_modules/json': { schema: ['limited?'] }
     validates :accreditation_document_ids, 'shared_modules/json': { schema: ['document'] }
     validates :licenses, 'shared_modules/json': { schema: ['limited?'] }
     validates :license_document_ids, 'shared_modules/json': { schema: ['document'] }
-    validates :awards, 'shared_modules/json': { schema: ['limited?'] }
-    validates :engagements, 'shared_modules/json': { schema: ['limited?'] }
 
     validates_presence_of :accreditation_document_ids, if: -> {
       accreditations.present? && accreditations.select(&:present?).present?
@@ -28,8 +24,6 @@ module SellerService::Profile
       self.accreditation_document_ids ||= []
       self.licenses ||= []
       self.license_document_ids ||= []
-      self.awards ||= []
-      self.engagements ||= []
     end
 
     def before_validate
@@ -39,8 +33,6 @@ module SellerService::Profile
     def before_save
       accreditations.select!(&:present?) if accreditations.present?
       licenses.select!(&:present?) if licenses.present?
-      awards.select!(&:present?) if awards.present?
-      engagements.select!(&:present?) if engagements.present?
     end
   end
 end

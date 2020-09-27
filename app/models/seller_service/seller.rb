@@ -503,9 +503,11 @@ module SellerService
 
     def self.profile_forms
       {
-        essential_information: SellerService::Profile::EssentialInformationForm,
+        search_description: SellerService::Profile::SearchDescriptionForm,
+        company_description: SellerService::Profile::CompanyDescriptionForm,
         contact_detail: SellerService::Profile::ContactDetailForm,
-        reputation_and_distinction: SellerService::Profile::ReputationAndDistinctionForm,
+        accreditation_and_license: SellerService::Profile::AccreditationAndLicenseForm,
+        membership_and_award: SellerService::Profile::MembershipAndAwardForm,
         capability_and_experty: SellerService::Profile::CapabilityAndExpertyForm,
         reference_and_case_study: SellerService::Profile::ReferenceAndCaseStudyForm,
         government_credential: SellerService::Profile::GovernmentCredentialForm,

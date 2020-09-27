@@ -31,13 +31,13 @@ module SellerService
       end
 
       if form.valid?
-        render json: serialize(form), status: :created
         form.save(version)
         form.update_field_statuses(@seller)
 
         @seller.auto_partial_approve_or_submit!(version, session_user)
 
         UserService::SyncTendersTeamJob.perform_later @seller.id
+        render json: serialize(form), status: :created
       else
         render json: { errors: [ form.rejections(@seller).merge(form.validation_errors) ] }, status: :unprocessable_entity
       end

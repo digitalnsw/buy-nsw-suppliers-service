@@ -116,6 +116,7 @@ module SellerService
             end
 
             # import even if registered user is suspended
+            # FIXME User is used cross service
             u = ::User.find_by(uuid: row['RegisteredUserUUID'])
             u ||= ::User.find_or_initialize_by(email: row['RegisteredUserEmail'].downcase)
             name = (row['RegisteredUserGivenName'].to_s + ' ' + row['RegisteredUserSurname'].to_s).

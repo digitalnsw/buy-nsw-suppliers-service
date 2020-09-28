@@ -2,13 +2,13 @@ module SellerService
   class AuditableForm < SellerService::BaseForm
 
     def update_field_statuses(seller)
+      existing_field_statuses = seller.field_statuses_hashed
       (two_way_fields+back_end_fields).each do |field|
-        existing_field_statuses = seller.field_statuses_hashed
         if existing_field_statuses[field].nil?
           sfs = SellerService::SellerFieldStatus.create!(seller_id: seller.id,
             field: field, status: 'reviewed',
             value: send(field).inspect)
-          existing_field_statuses[sfs.field] = sfs
+          existing_field_statuses[field] = sfs
         end
 
         if feedback_fields.include?(field) &&

@@ -259,7 +259,9 @@ module SellerService
       pv = version || pending_version
       rejected_fields = seller_field_statuses.select do |tag|
         tag.status != 'accepted' && av.send(tag.field) != pv.send(tag.field)
-      end.map do |tag| [tag.field.to_sym, av.send(tag.field)] end.to_h
+      end.map { |tag|
+        [tag.field.to_sym, av.send(tag.field)]
+      }.to_h.select{|k,v|pv.respond_to?(k.to_s + '=')}
       pv.update_attributes!(rejected_fields) if rejected_fields.any?
     end
 

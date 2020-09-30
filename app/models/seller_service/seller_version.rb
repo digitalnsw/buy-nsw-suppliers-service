@@ -250,7 +250,7 @@ module SellerService
 #         'suv-large',
 #         'suv-medium',
 #         'suv-small',
-#         'vans/cc',
+#         'vans-cc',
         ]
       },
       'food' => {},

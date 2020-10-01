@@ -526,7 +526,7 @@ module SellerService
         legal_disclosure: SellerService::Account::LegalDisclosureForm,
         insurance_document: SellerService::Account::InsuranceDocumentForm,
         financial_document: SellerService::Account::FinancialDocumentForm,
-        scheme_and_panel: SellerService::Account::SchemeAndPanelForm,
+#        scheme_and_panel: SellerService::Account::SchemeAndPanelForm,
       }
     end
 

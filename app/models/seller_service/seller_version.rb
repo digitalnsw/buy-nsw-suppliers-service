@@ -26,7 +26,7 @@ module SellerService
     pg_search_scope :search_by_contact_name, against: [:contact_first_name, :contact_last_name],
       using: { tsearch: { prefix: true } }
 
-    pg_search_scope :search_by_abn, against: :abn
+    pg_search_scope :search_by_abn, against: :abn,
       using: { tsearch: { prefix: true } }
 
     acts_as_paranoid column: :discarded_at

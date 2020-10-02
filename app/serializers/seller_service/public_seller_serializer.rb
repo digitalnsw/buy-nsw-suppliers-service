@@ -25,6 +25,8 @@ module SellerService
           govdc: 'GovDC',
         }.map{ |key, value| version.send(key) ? value : nil }.compact,
         level_1_services: version.level_1_services,
+        level_2_services: version.level_2_services,
+        level_3_services: version.level_3_services,
         public_address: version.addresses[version.profile_address_index],
         documents: [
           "financial_statement",

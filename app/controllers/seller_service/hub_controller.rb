@@ -28,9 +28,9 @@ module SellerService
 
     def index
       page = (params[:page] || 1).to_i
-      ppr = (params[:ppr] || 100).to_i
+      ppr = params[:ppr].to_i
 
-      @seller_versions = scoped_seller_versions.
+      ppr = 100 unless ppr >= 10 && ppr <= 1000
 
       if params[:order] == 'abn'
         @seller_versions = scoped_seller_versions.order(:abn)
@@ -38,7 +38,13 @@ module SellerService
         @seller_versions = scoped_seller_versions.order(:contact_first_name, :contact_last_name)
       elsif params[:order] == 'business_name'
         @seller_versions = scoped_seller_versions.order(:name)
+      else
+        @seller_versions = scoped_seller_versions
       end
+
+      @seller_versions = @seller_versions.
+                 offset( (page-1) * ppr ).
+                 limit(ppr)
 
       render json: serializer.index
     end

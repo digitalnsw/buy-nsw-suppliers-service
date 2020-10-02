@@ -7,7 +7,23 @@ module SellerService
     include Concerns::StateScopes
     include Concerns::Documentable
     include PgSearch::Model
-    pg_search_scope :search_by_term, against: [:name, :flagship_product, :summary]
+
+    pg_search_scope :search_by_term, against: :name,
+      associated_against: { last_profile_version: [:flagship_product, :summary] },
+      ignoring: :accents, using: { tsearch: { prefix: true } }
+
+    pg_search_scope :search_by_phrase, against: {
+      name: 'A',
+      contact_first_name: 'B',
+      contact_last_name: 'B',
+      abn: 'C'
+    }, ignoring: :accents, using: { tsearch: { prefix: true } }
+
+    pg_search_scope :search_by_business_name, against: [:name],
+      ignoring: :accents, using: { tsearch: { prefix: true } }
+
+    pg_search_scope :search_by_contact_name, against: [:contact_first_name, :contact_last_name],
+      ignoring: :accents, using: { tsearch: { prefix: true } }
 
     acts_as_paranoid column: :discarded_at
 
@@ -530,8 +546,41 @@ module SellerService
     end
 
     def self.with_term(t)
-      if t.present?
+      if t&.strip&.present?
         search_by_term(t)
+      else
+        all
+      end
+    end
+
+    def self.with_phrase(p)
+      if p&.strip&.present?
+        p = ABN.new(p).to_s if ABN.valid?(p)
+        search_by_phrase(p)
+      else
+        all
+      end
+    end
+
+    def self.with_abn(a)
+      if a&.strip&.present?
+        where(abn: ABN.new(a).to_s)
+      else
+        all
+      end
+    end
+
+    def self.with_business_name(n)
+      if n&.strip&.present?
+        search_by_business_name n
+      else
+        all
+      end
+    end
+
+    def self.with_contact_name(n)
+      if n&.strip&.present?
+        search_by_contact_name n
       else
         all
       end

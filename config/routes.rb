@@ -18,6 +18,10 @@ SellerService::Engine.routes.draw do
     post :join, on: :collection
   end
 
+  resources :hub, only: [:index, :show] do
+    get :count, on: :collection
+  end
+
   resources :seller_forms, only: [:update, :index], path: "seller_form/:form_name"
   resources :seller_account_forms, only: [:update, :index, :show], path: "seller_account_form/:form_name"
   resources :seller_profile_forms, only: [:update, :show], path: "seller_profile_form/:form_name"

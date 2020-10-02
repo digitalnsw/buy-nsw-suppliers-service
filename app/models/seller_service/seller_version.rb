@@ -8,8 +8,10 @@ module SellerService
     include Concerns::Documentable
     include PgSearch::Model
 
-    pg_search_scope :search_by_term, against: [:name, :flagship_product],
-      using: { tsearch: { prefix: true } }
+    pg_search_scope :search_by_term, against: {
+      name: 'A',
+      flagship_product: 'B',
+    }, using: { tsearch: { prefix: true } }
 
     pg_search_scope :search_by_phrase, against: {
       name: 'A',
@@ -18,10 +20,13 @@ module SellerService
       abn: 'C'
     }, using: { tsearch: { prefix: true } }
 
-    pg_search_scope :search_by_business_name, against: [:name],
+    pg_search_scope :search_by_business_name, against: :name,
       using: { tsearch: { prefix: true } }
 
     pg_search_scope :search_by_contact_name, against: [:contact_first_name, :contact_last_name],
+      using: { tsearch: { prefix: true } }
+
+    pg_search_scope :search_by_abn, against: :abn
       using: { tsearch: { prefix: true } }
 
     acts_as_paranoid column: :discarded_at
@@ -565,7 +570,7 @@ module SellerService
     def self.with_abn(q)
       q = q.to_s.gsub(/[^0-9 ]/, '')
       if q.present?
-        where("abn like '%#{q}%'")
+        search_by_abn q
       else
         all
       end

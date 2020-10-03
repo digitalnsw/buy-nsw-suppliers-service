@@ -51,12 +51,12 @@ module SellerService
     end
 
     def show
-      { publicSeller: attributes(@seller_version) }
+      { supplier: attributes(@seller_version) }
     end
 
     def index
       {
-        publicSellers: @seller_versions.map do |version|
+        suppliers: @seller_versions.map do |version|
           attributes(version)
         end
       }

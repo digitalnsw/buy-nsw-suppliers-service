@@ -10,7 +10,8 @@ module SellerService
     end
 
     def scoped_seller_versions
-      SellerService::SellerVersion.approved.yield_self do |rel|
+      SellerService::SellerVersion.approved.
+        includes(:last_profile_version).yield_self do |rel|
         [
           :phrase,
           :abn,
@@ -28,9 +29,9 @@ module SellerService
 
     def index
       page = (params[:page] || 1).to_i
-      ppr = params[:ppr].to_i
+      rpp = params[:rpp].to_i
 
-      ppr = 100 unless ppr >= 10 && ppr <= 1000
+      rpp = 100 unless rpp >= 10 && rpp <= 100
 
       if params[:order] == 'abn'
         @seller_versions = scoped_seller_versions.order(:abn)
@@ -43,8 +44,8 @@ module SellerService
       end
 
       @seller_versions = @seller_versions.
-                 offset( (page-1) * ppr ).
-                 limit(ppr)
+                 offset( (page-1) * rpp ).
+                 limit(rpp)
 
       render json: serializer.index
     end

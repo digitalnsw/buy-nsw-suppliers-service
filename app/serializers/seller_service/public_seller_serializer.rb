@@ -5,12 +5,19 @@ module SellerService
       @buyer_view = buyer_view
       @seller_version = seller_version
       @seller_versions = seller_versions
+      @schemes = SellerService::SupplierScheme.all.to_a
+    end
+
+    def schemes_hash
+      @schemes_hash ||= @schemes.map { |scheme|
+        [ scheme.id, scheme.serialized ]
+      }.to_h
     end
 
     def attributes(version)
-      profile = version.seller.last_profile_version
+      profile = version.last_profile_version
       all_schemes = SellerService::SupplierScheme.all.map {|scheme|
-        [scheme.id, {url: scheme.url, number: scheme.number, title: scheme.title}]
+        [ scheme.id, scheme.serialized ]
       }.to_h
       result = {
         id: version.seller_id,
@@ -39,7 +46,7 @@ module SellerService
             name: field.humanize,
           }
         },
-        schemes_and_panels: version.schemes_and_panels&.map{|s_id| all_schemes[s_id]},
+        schemes_and_panels: version.schemes_and_panels&.map{|s_id| schemes_hash[s_id]}.compact,
       }.merge(escape_recursive version.attributes.slice(
         "name",
         "abn",
@@ -57,14 +64,6 @@ module SellerService
           "contact_email",
           "contact_position",
         ))
-      end
-
-      scheme_ids = version.schemes_and_panels
-      if scheme_ids.present?
-        schemes = SellerService::SupplierScheme.where(id: scheme_ids).map(&:serialized)
-        result.merge!({
-          schemes_and_panels: escape_recursive(schemes),
-        })
       end
 
       result

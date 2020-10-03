@@ -63,8 +63,17 @@ module SellerService
           sv = SellerVersion.where(state: [:pending, :approved], abn: abn).first
           sv ||= SellerVersion.where(abn: abn).where.not(state: :archived).first
 
+          scheme = SellerService::SupplierScheme.find_or_initialize_by(
+            tenders_id: pv.fields['SchemeID']
+          )
+          scheme.category = pv.fields['SchemeCategory']
+          scheme.title = pv.fields['SchemeTitle']
+          scheme.save if scheme.has_changes_to_save?
+
           SellerService::Seller.transaction do
             if sv
+              sv.schemes_and_panels |= [ scheme.id ] if scheme.id
+              sv.save! if sv.has_changes_to_save?
               seller = sv.seller
               seller.update_attributes!(uuid: pv.uuid) if seller.uuid.nil?
             else
@@ -73,6 +82,7 @@ module SellerService
                 seller_id: seller.id,
                 state: :draft,
                 started_at: Time.now,
+                schemes_and_panels: [ scheme.id ].compact,
 
                 name: row['CompanyName'] || '',
                 abn: abn,

@@ -7,7 +7,27 @@ module SellerService
     include Concerns::StateScopes
     include Concerns::Documentable
     include PgSearch::Model
-    pg_search_scope :search_by_term, against: [:name, :flagship_product, :summary]
+
+    pg_search_scope :search_by_term, against: {
+      name: 'A',
+      flagship_product: 'B',
+    }, using: { tsearch: { prefix: true } }
+
+    pg_search_scope :search_by_phrase, against: {
+      name: 'A',
+      contact_first_name: 'B',
+      contact_last_name: 'B',
+      abn: 'C'
+    }, using: { tsearch: { prefix: true } }
+
+    pg_search_scope :search_by_business_name, against: :name,
+      using: { tsearch: { prefix: true } }
+
+    pg_search_scope :search_by_contact_name, against: [:contact_first_name, :contact_last_name],
+      using: { tsearch: { prefix: true } }
+
+    pg_search_scope :search_by_abn, against: :abn,
+      using: { tsearch: { prefix: true } }
 
     acts_as_paranoid column: :discarded_at
 
@@ -250,7 +270,7 @@ module SellerService
 #         'suv-large',
 #         'suv-medium',
 #         'suv-small',
-#         'vans/cc',
+#         'vans-cc',
         ]
       },
       'food' => {},
@@ -529,9 +549,46 @@ module SellerService
       @tags ||= SellerService::SellerFieldStatus.where(seller_id: seller_id).to_a
     end
 
-    def self.with_term(t)
-      if t.present?
-        search_by_term(t)
+    def self.with_term(q)
+      if q&.strip&.present?
+        search_by_term(q)
+      else
+        all
+      end
+    end
+
+    def self.with_phrase(q)
+      q = q.to_s.gsub(/[^0-9a-z ]/i, '')
+      if q&.strip&.present?
+        q = ABN.new(q).to_s if ABN.valid?(q)
+        search_by_phrase(q)
+      else
+        all
+      end
+    end
+
+    def self.with_abn(q)
+      q = q.to_s.gsub(/[^0-9 ]/, '')
+      if q.present?
+        search_by_abn q
+      else
+        all
+      end
+    end
+
+    def self.with_business_name(q)
+      q = q.to_s.gsub(/[^0-9a-z ]/i, '')
+      if q&.strip&.present?
+        search_by_business_name q
+      else
+        all
+      end
+    end
+
+    def self.with_contact_name(q)
+      q = q.to_s.gsub(/[^0-9a-z ]/i, '')
+      if q&.strip&.present?
+        search_by_contact_name q
       else
         all
       end

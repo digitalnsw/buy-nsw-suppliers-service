@@ -44,7 +44,7 @@ module SellerService
       raise SharedModules::MethodNotAllowed if params[:account] && !seller.live?
       forms = params[:account] ? SellerService::Seller.account_forms : SellerService::Seller.forms
       render json: (forms.map { |k, v|
-        form = v.new.load(seller.latest_version)
+        form = v.new.load(seller.last_version)
         form.session_user = session_user
         [k, {
           status: form.status(seller),
@@ -58,7 +58,7 @@ module SellerService
       seller = SellerService::Seller.where(id: session_user.seller_id).first
       raise SharedModules::MethodNotAllowed if seller.nil? || !seller.live?
 
-      service = SellerService::DocumentExpiryService.new(seller_version: seller.latest_version)
+      service = SellerService::DocumentExpiryService.new(seller_version: seller.last_version)
       render json: service.documents_serializable
     end
 
@@ -88,7 +88,7 @@ module SellerService
     end
 
     def all_services
-      render json: @seller&.latest_version.services
+      render json: @seller&.last_version.services
     end
 
     def run_operation(operation)

@@ -17,12 +17,12 @@ module SellerService
       if seller
         escape_recursive({
           id: seller.id,
-          name: seller.latest_version&.name,
+          name: seller.last_version&.name,
           status: seller.status,
           live: seller.live?,
           canBeWithdrawn: seller.can_be_withdrawn?,
           lastProfileUpdate: profile&.updated_at&.strftime("%d %B %Y"),
-          lastAccountUpdate: seller.latest_version&.updated_at&.strftime("%d %B %Y"),
+          lastAccountUpdate: seller.last_version&.updated_at&.strftime("%d %B %Y"),
         })
       end
     end

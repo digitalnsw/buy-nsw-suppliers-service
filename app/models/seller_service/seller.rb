@@ -12,7 +12,9 @@ module SellerService
     has_one :waiting_seller
     has_many :versions, class_name: 'SellerService::SellerVersion', dependent: :destroy, inverse_of: :seller
     has_many :profile_versions, class_name: 'SellerService::SellerProfileVersion', dependent: :destroy, inverse_of: :seller
-    has_one  :last_profile_version, -> { where(next_version: nil) }, class_name: 'SellerService::SellerProfileVersion', inverse_of: :seller
+    has_one  :last_profile_version, -> { where(next_version_id: nil) }, class_name: 'SellerService::SellerProfileVersion', inverse_of: :seller
+
+    has_one :last_version, -> { where(next_version_id: nil) }, class_name: 'SellerService::SellerVersion'
 
     has_one :last_edited_by, through: :last_version, source: :edited_by, inverse_of: :seller
     has_many :seller_field_statuses, class_name: "SellerService::SellerFieldStatus", dependent: :destroy, inverse_of: :seller
@@ -45,15 +47,11 @@ module SellerService
     end
 
     def last_edited_at
-      latest_version&.created_at
+      last_version&.created_at
     end
 
     def last_version
       versions.find{ |v| v.next_version_id == nil}
-    end
-
-    def latest_version
-      versions.where.not(state: 'archived').order(:id).last
     end
 
     def draft_version
@@ -109,23 +107,23 @@ module SellerService
     end
 
     def status
-      if latest_version.nil?
+      if last_version.nil?
         :archived
       elsif has_approved?
-        if latest_version.draft?
+        if last_version.draft?
           :amendment_draft
-        elsif latest_version.pending?
+        elsif last_version.pending?
           :amendment_pending
-        elsif latest_version.declined?
+        elsif last_version.declined?
           :amendment_changes_requested
         else
           :live
         end
       else
-        if latest_version.declined?
+        if last_version.declined?
           :changes_requested
         else
-          latest_version&.state&.to_sym
+          last_version&.state&.to_sym
         end
       end
     end
@@ -197,7 +195,7 @@ module SellerService
     def can_be_submitted?
       required_forms = live? ? self.class.account_forms : forms
       required_forms.all? do |key, form|
-        form_object = form.new.load(latest_version)
+        form_object = form.new.load(last_version)
         result = !form_object.declined?(self) &&
                  ( form_object.valid? ||
                    ( form_object.optional? && !form_object.started? )
@@ -533,7 +531,7 @@ module SellerService
     end
 
 #    def seller_decisions
-#      @seller_decisions ||= latest_version.tags.map do |sfs|
+#      @seller_decisions ||= last_version.tags.map do |sfs|
 #        [sfs.field.to_sym, sfs]
 #      end.to_h
 #    end

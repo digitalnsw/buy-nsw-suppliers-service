@@ -22,7 +22,7 @@ module SellerService
     def index
       form = form_class.new
       form.session_user = session_user
-      form.load @seller.latest_version
+      form.load @seller.last_version
       form.valid?
       render json: {
         "seller-form/"+params[:form_name].to_s => form.attributes.merge({

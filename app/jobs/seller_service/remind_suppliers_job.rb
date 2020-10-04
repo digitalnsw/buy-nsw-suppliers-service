@@ -6,14 +6,14 @@ module SellerService
       reminded_to_review = 0
       reminded_to_update_profile = 0
 
-      SellerService::Seller.all.each do |seller|
+      SellerService::Seller.all.eager_load(:last_profile_version, :last_version).each do |seller|
 
         if seller.status == :live
-          profile = seller.profile_versions.order(id: :desc).first
+          profile = seller.last_profile_version
           next if profile.nil?
           d = (Date.today - profile.updated_at.to_date).to_i
         else
-          version = seller.latest_version
+          version = seller.last_version
           next if version.nil?
           d = (Date.today - version.updated_at.to_date).to_i
         end

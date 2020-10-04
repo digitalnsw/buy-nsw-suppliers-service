@@ -169,7 +169,7 @@ module SellerService
         SQL
     end
 
-    scope :latest, -> { ranked.where('seller_versions.row_number = 1') }
+    scope :latest, -> { where(next_version_id: nil) }
 
     scope :for_review,        ->            { where(state: :pending) }
 
@@ -542,7 +542,7 @@ module SellerService
     end
 
     def is_latest?
-      next_version.nil?
+      next_version_id.nil?
     end
 
     def tags

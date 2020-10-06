@@ -11,6 +11,14 @@ module SellerService
       }
     end
 
+    def number
+      'SCM%04d' % self.scheme_id
+    end
+
+    def url
+      ENV['ETENDERING_URL'].to_s + '/?event=public.scheme.show&RFTUUID=' + self.rft_uuid.to_s
+    end
+
     def self.import xml_doc
       rows = xml_doc.css('row').to_a.map do |row|
         fields = row.css("field").map do |field|

@@ -64,7 +64,7 @@ module SellerService
           sv ||= SellerVersion.where(abn: abn).where.not(state: :archived).first
 
           scheme = SellerService::SupplierScheme.find_or_initialize_by(
-            tenders_id: pv.fields['SchemeID']
+            scheme_id: pv.fields['SchemeID']
           )
           scheme.category = pv.fields['SchemeCategory']
           scheme.title = pv.fields['SchemeTitle']

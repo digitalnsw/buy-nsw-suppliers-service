@@ -169,8 +169,9 @@ module SellerService
       SharedResources::RemoteNotification.create_notification(
         unifier: 'join_' + session_user.id.to_s + '_to_' + sv.seller_id.to_s,
         recipients: owners.map(&:id),
-        subject: "#{current_user.full_name || current_user.email} requested to join your supplier team",
-        body: "By accepting this request #{current_user.full_name || current_user.email} will be able to update your company profile.",
+        subject: "#{current_user.full_name || current_user.email} has requested to join your team",
+        body: "By accepting this request #{current_user.full_name || current_user.email} will be able to make changes to your company account and profile.",
+        fa_icon: 'user-clock',
         actions: [
           {
             key: 'accept',

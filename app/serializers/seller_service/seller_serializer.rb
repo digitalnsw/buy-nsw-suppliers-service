@@ -21,7 +21,7 @@ module SellerService
 
     def attributes(seller)
       profile = seller&.last_profile_version
-      version = seller.last_version
+      version = seller&.last_version
       if seller
         escape_recursive({
           id: seller.id,

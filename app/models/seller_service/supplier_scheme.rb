@@ -29,9 +29,9 @@ module SellerService
       rows.each do |row|
         scheme = SupplierScheme.find_or_initialize_by(scheme_id: row['SchemeID'].to_s)
         scheme.title = row['Title']
-        scheme.start_date = DateTime.parse(row['StartDate'])
-        scheme.end_date = DateTime.parse(row['EndDate'])
-        scheme.close_date = DateTime.parse(row['RFTCloseDateTime'])
+        scheme.start_date = DateTime.parse(row['StartDate']) rescue nil
+        scheme.end_date = DateTime.parse(row['EndDate']) rescue nil
+        scheme.close_date = DateTime.parse(row['RFTCloseDateTime']) rescue nil
         scheme.rft_uuid = row['RFTUUID']
         scheme.save!
       end

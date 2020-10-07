@@ -72,6 +72,8 @@ module SellerService
 
           SellerService::Seller.transaction do
             if sv
+              # FIXME: here scheme is being added only to one version.
+              # If version is in draft or pending, it should be added to two versions
               sv.schemes_and_panels |= [ scheme.id ] if scheme.id
               sv.save! if sv.has_changes_to_save?
               seller = sv.seller

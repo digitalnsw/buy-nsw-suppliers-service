@@ -12,7 +12,7 @@ module SellerService
     end
 
     def number
-      'SCM%04d' % self.scheme_id
+      'SCM%04d' % self.scheme_id.to_i
     end
 
     def url

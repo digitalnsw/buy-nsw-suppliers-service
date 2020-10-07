@@ -1,19 +1,5 @@
 module SellerService::Account
-  class BusinessCategoryForm < SellerService::Account::AuditableForm
-    field :start_up
-    field :sme
-    field :not_for_profit
-    field :australian_owned
-    field :indigenous
-    field :disability
-
-    field :corporate_structure, usage: :back_end
-    field :establishment_date, usage: :back_end
-    field :number_of_employees, usage: :read_only
-
-    field :can_be_startup, usage: :front_end
-    field :overseas, usage: :front_end
-
+  class ProductCategoryForm < SellerService::Account::AuditableForm
     field :top_categories, type: :json, usage: :front_end
     field :sub_categories, type: :json, usage: :front_end
 
@@ -23,10 +9,6 @@ module SellerService::Account
     validates :services, 'shared_modules/json': { schema: [
       Set.new(SellerService::SellerVersion.all_services)
     ] }
-
-    def establishment_date_in_range
-      establishment_date.present? && establishment_date > 5.years.ago
-    end
 
     def level_1_services
       self.services ||= []
@@ -46,17 +28,9 @@ module SellerService::Account
     def after_load
       self.top_categories = SellerService::SellerVersion.service_levels.keys.map{|k| {key: k, label: :friendly} }
       self.sub_categories = SellerService::SellerVersion.flat_sub_categories
-      self.can_be_startup = establishment_date_in_range
-      self.overseas = corporate_structure == 'overseas'
-      self.start_up = false unless establishment_date_in_range
-      self.sme = false if number_of_employees == '200plus' || overseas
     end
 
     def before_save
-      self.overseas = corporate_structure == 'overseas'
-      self.sme = false if number_of_employees == '200plus' || overseas
-      self.start_up = false unless establishment_date_in_range
-
       self.services = (level_1_services | level_2_services | level_3_services)
     end
   end

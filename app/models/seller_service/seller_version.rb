@@ -478,10 +478,34 @@ module SellerService
       SellerVersion::SERVICE_LEVELS
     end
 
+    def self.break_levels services
+      return [] if services.blank?
+      services = services.to_set
+      SellerVersion::SERVICE_LEVELS.select{ |k,v|
+        k.in? services
+      }.map{ |k, v|
+        [
+          k, v.select{ |k, v|
+            k.in? services
+          }.map{ |k, v|
+            [
+              k, v.select{ |v|
+                v.in? services
+              }
+            ]
+          }
+        ]
+      }
+    end
+
+    def service_levels
+      SellerService::SellerVersion.break_levels services
+    end
+
     def self.flat_sub_categories
       h = self.service_levels.map{|k,v| [k, v.keys]}.to_h
       g = self.service_levels.values.reduce(h){|v, h| h.merge(v)}
-      f = g.map{|k,v| [k, v.map{|s| {key: s, label: 'friendly'}}]}
+      f = g.map{|k,v| [k, v.map{|s| {key: s, value: s, label: 'friendly'}}]}
       f.select{|k,v| v.present?}.to_h
     end
 

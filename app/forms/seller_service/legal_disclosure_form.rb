@@ -28,11 +28,18 @@ module SellerService
 
     validates :receivership, inclusion: { in: [false, true, 'false', 'true'] }
     validates :receivership_details, presence: true, if: -> { receivership.to_s == 'true' }
+    validates :receivership_details, format: { with: /\A[A-Za-z0-9 .,'":;+~*\-_|()@#$%&\/\s]{0,1000}\z/ }
+
     validates :bankruptcy, inclusion: { in: [false, true, 'false', 'true'] }
     validates :bankruptcy_details, presence: true, if: -> { bankruptcy.to_s == 'true' }
+    validates :bankruptcy_details, format: { with: /\A[A-Za-z0-9 .,'":;+~*\-_|()@#$%&\/\s]{0,1000}\z/ }
+
     validates :investigations, inclusion: { in: [false, true, 'false', 'true'] }
     validates :investigations_details, presence: true, if: -> { investigations.to_s == 'true' }
+    validates :investigations_details, format: { with: /\A[A-Za-z0-9 .,'":;+~*\-_|()@#$%&\/\s]{0,1000}\z/ }
+
     validates :legal_proceedings, inclusion: { in: [false, true, 'false', 'true'] }
     validates :legal_proceedings_details, presence: true, if: -> { legal_proceedings.to_s == 'true' }
+    validates :legal_proceedings_details, format: { with: /\A[A-Za-z0-9 .,'":;+~*\-_|()@#$%&\/\s]{0,1000}\z/ }
   end
 end

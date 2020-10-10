@@ -9,7 +9,7 @@ module SellerService
     field :can_join, usage: :front_end
 
     validates_presence_of :name
-    validates :name, format: { with: /\A[A-Za-z0-9 .,'":;+~*\-_|()@#$%&\/\s]{0,1000}\z/ }
+    validates :name, format: { with: /\A[A-Za-z0-9 .,'":;+~*\-_|()@#$%&\/\s]{0,100}\z/ }
 
     validates_presence_of :abn
     validate :abn_format

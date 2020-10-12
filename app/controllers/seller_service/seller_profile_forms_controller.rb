@@ -60,6 +60,9 @@ module SellerService
       if form.valid?
         @profile_version = @seller.create_profile_version
         form.save(@profile_version)
+        @seller.update_search_columns(@profile_version) if params[:form_name].to_sym.in?(
+          [:search_description, :company_description]
+        )
         render json: form.attributes, status: :created
       else
         render json: { errors: [ form.validation_errors ] }, status: :unprocessable_entity

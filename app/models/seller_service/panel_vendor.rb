@@ -60,8 +60,8 @@ module SellerService
           next unless abn.present? && ABN.valid?(abn)
           abn = ABN.new(abn).to_s
 
-          sv = SellerVersion.where(state: [:pending, :approved], abn: abn).first
-          sv ||= SellerVersion.where(abn: abn).where.not(state: :archived).first
+          sv = SellerVersion.where(state: [:pending, :approved], abn: abn).order(id: :desc).first
+          sv ||= SellerVersion.where(abn: abn).where.not(state: :archived).order(id: :desc).first
 
           scheme = SellerService::SupplierScheme.find_or_initialize_by(
             scheme_id: pv.fields['SchemeID']

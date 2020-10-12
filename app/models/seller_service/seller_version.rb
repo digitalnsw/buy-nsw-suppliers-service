@@ -11,6 +11,7 @@ module SellerService
     pg_search_scope :search_by_term, against: {
       name: 'A',
       flagship_product: 'B',
+      summary: 'C',
     }, using: { tsearch: { prefix: true } }
 
     pg_search_scope :search_by_phrase, against: {

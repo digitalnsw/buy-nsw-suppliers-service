@@ -467,6 +467,15 @@ module SellerService
       "Seller submitted by #{user.email}."
     end
 
+    def update_search_columns profile_version
+      versions.where.not(state: :archived).each do |version|
+          version.update_attributes!(
+            flagship_product: profile_version.flagship_product,
+            summary: profile_version.summary
+          )
+      end
+    end
+
     def self.forms
       {
 #        eligibility: SellerService::EligibilityForm,
@@ -527,7 +536,7 @@ module SellerService
         legal_disclosure: SellerService::Account::LegalDisclosureForm,
         insurance_document: SellerService::Account::InsuranceDocumentForm,
         financial_document: SellerService::Account::FinancialDocumentForm,
-#        scheme_and_panel: SellerService::Account::SchemeAndPanelForm,
+        scheme_and_panel: SellerService::Account::SchemeAndPanelForm,
       }
     end
 

@@ -499,6 +499,7 @@ module SellerService
     end
 
     def create_profile_version
+      copy = nil
       SellerService::SellerProfileVersion.transaction do
         v = last_profile_version
         copy = SellerService::SellerProfileVersion.create!(v.attributes.except(

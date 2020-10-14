@@ -497,15 +497,17 @@ module SellerService
     end
 
     def create_profile_version
-      v = last_profile_version
-      copy = SellerService::SellerProfileVersion.create!(v.attributes.except(
-        "id",
-        "next_version_id",
-        "created_at",
-        "updated_at",
-      ))
+      SellerService::SellerProfileVersion.transaction do
+        v = last_profile_version
+        copy = SellerService::SellerProfileVersion.create!(v.attributes.except(
+          "id",
+          "next_version_id",
+          "created_at",
+          "updated_at",
+        ))
 
-      v.update_attributes(next_version: copy)
+        v.update_attributes(next_version: copy)
+      end
       reload
       copy
     end

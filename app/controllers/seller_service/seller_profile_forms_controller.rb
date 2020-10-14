@@ -104,7 +104,7 @@ module SellerService
         @seller = SellerService::Seller.live.where(id: session_user.seller_id).first
       end
       raise SharedModules::NotFound unless @seller
-      @profile_version = @seller.profile_versions.where(next_version_id: nil).first
+      @profile_version = @seller.last_profile_version
     end
   end
 end

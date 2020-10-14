@@ -432,12 +432,14 @@ module SellerService
     end
 
     def auto_partial_approve_or_submit! version, user
-      if base_fields_edited?
-        auto_partial_approve!
-      end
+      SellerService::Seller.transaction do
+        if base_fields_edited?
+          auto_partial_approve!
+        end
 
-      if document_fields_edited?
-        auto_submit!
+        if document_fields_edited?
+          auto_submit!
+        end
       end
       create_event(user, "Seller self approved by #{user.email}")
     end

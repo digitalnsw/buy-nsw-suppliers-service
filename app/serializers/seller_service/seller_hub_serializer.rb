@@ -27,12 +27,11 @@ module SellerService
           disability: 'disability',
           australian_owned: 'australian-owned',
         }.map{ |key, value| version.send(key) ? value : nil }.compact,
-        public_address: version.addresses[version.profile_address_index],
         schemes_and_panels: version.schemes_and_panels&.map{|s_id| schemes_hash[s_id]}.compact,
         level_1_services: version.level_1_services,
         level_2_services: version.level_2_services,
         level_3_services: version.level_3_services,
-      }.merge(escape_recursive version.attributes.slice(
+      }.merge(unescape_recursive version.attributes.slice(
         "name",
         "abn",
         "contact_first_name",
@@ -40,7 +39,8 @@ module SellerService
         "contact_phone",
         "contact_email",
         "contact_position",
-      )).merge(escape_recursive({
+      )).merge(unescape_recursive({
+        public_address: version.addresses[version.profile_address_index],
         updated_at: profile&.updated_at&.strftime("%d %B %Y"),
         flagship_product: profile&.flagship_product,
         website_url: profile&.website_url,

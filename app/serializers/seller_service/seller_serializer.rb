@@ -23,7 +23,7 @@ module SellerService
       profile = seller&.last_profile_version
       version = seller&.last_version
       if seller
-        escape_recursive({
+        unescape_recursive({
           id: seller.id,
           name: version&.name,
           status: seller.status,

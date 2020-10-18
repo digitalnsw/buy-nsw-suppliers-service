@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/digitalnsw/buy-nsw-shared-libraries
-  revision: 1853be9ee837d59655d6f154476b38026750224e
-  tag: v70
+  revision: 4ddfd95218e05c778a21600c1362c8cca0022b40
+  tag: v72
   specs:
     shared_libraries (0.0.1)
       activeresource (~> 5.1.1)

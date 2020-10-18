@@ -14,7 +14,7 @@ module SellerService
       if private_form?(form_name) && !buyer_view?
         {}
       else
-        unescape_recursive(form.attributes)
+        full_sanitize_recursive(form.attributes)
       end
     end
 
@@ -26,7 +26,7 @@ module SellerService
           }
         }
       else
-        unescape_recursive(
+        full_sanitize_recursive(
          { "seller-profile/"+form_name.to_s.dasherize => 
             form.attributes.merge({
               id: seller_id,

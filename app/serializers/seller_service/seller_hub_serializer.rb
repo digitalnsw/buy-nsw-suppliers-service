@@ -31,7 +31,7 @@ module SellerService
         level_1_services: version.level_1_services,
         level_2_services: version.level_2_services,
         level_3_services: version.level_3_services,
-      }.merge(unescape_recursive version.attributes.slice(
+      }.merge(full_sanitize_recursive version.attributes.slice(
         "name",
         "abn",
         "contact_first_name",
@@ -39,7 +39,7 @@ module SellerService
         "contact_phone",
         "contact_email",
         "contact_position",
-      )).merge(unescape_recursive({
+      )).merge(full_sanitize_recursive({
         public_address: version.addresses[version.profile_address_index],
         updated_at: profile&.updated_at&.strftime("%d %B %Y"),
         flagship_product: profile&.flagship_product,

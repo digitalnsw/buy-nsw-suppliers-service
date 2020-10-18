@@ -50,7 +50,7 @@ module SellerService
     # This loads fields from DB
     def load(version)
       (two_way_fields + back_end_fields + read_only_fields).each do |field|
-        send(field.to_s + '=', unescape_recursive(version.send(field)))
+        send(field.to_s + '=', full_sanitize_recursive(version.send(field)))
       end
       after_load if defined? after_load
       self

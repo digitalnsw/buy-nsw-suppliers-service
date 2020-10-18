@@ -46,10 +46,10 @@ module SellerService
           }
         },
         schemes_and_panels: version.schemes_and_panels&.map{|s_id| schemes_hash[s_id]}.compact,
-      }.merge(unescape_recursive version.attributes.slice(
+      }.merge(full_sanitize_recursive version.attributes.slice(
         "name",
         "abn",
-      )).merge(unescape_recursive({
+      )).merge(full_sanitize_recursive({
         public_address: version.addresses[version.profile_address_index],
         updated_at: profile&.updated_at&.strftime("%d %B %Y"),
         flagship_product: profile&.flagship_product,
@@ -57,7 +57,7 @@ module SellerService
         summary: profile&.summary,
       }))
       if @buyer_view
-        result.merge!(unescape_recursive version.attributes.slice(
+        result.merge!(full_sanitize_recursive version.attributes.slice(
           "contact_first_name",
           "contact_last_name",
           "contact_phone",

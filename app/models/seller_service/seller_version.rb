@@ -7,6 +7,7 @@ module SellerService
     include Concerns::StateScopes
     include Concerns::Documentable
     include PgSearch::Model
+    include SharedModules::Serializer
 
     pg_search_scope :search_by_term, against: {
       name: 'A',
@@ -468,6 +469,15 @@ module SellerService
 #        'solar-ppa' => [],
 #      },
     }
+
+    before_save :sanitize_fields
+
+    def sanitize_fields
+      attributes.select{|k,v| v.present?}.each do |key, value|
+        sanitized = sanitize_recursive(value)
+        self.send(key + '=', sanitized) if sanitized != value
+      end
+    end
 
     before_save :remove_invalid_services
 

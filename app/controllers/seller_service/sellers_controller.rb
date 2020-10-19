@@ -189,6 +189,13 @@ module SellerService
           },
         ]
       )
+
+      SharedResources::RemoteEvent.generate_token current_user
+      SharedResources::RemoteEvent.create_event(
+          current_user.id, 'User',
+          current_user.id, 'Event::User',
+          'User requested to join supplier: ' + sv.seller_id.to_s)
+
       render json: {}, status: :created
     end
 

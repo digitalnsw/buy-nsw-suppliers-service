@@ -10,7 +10,9 @@ module SellerService
       @seller = seller
       @export_enc = export_enc
       @sellers = sellers
-      @schemes = SellerService::SupplierScheme.all.to_a
+      @schemes = SellerService::SupplierScheme.all.to_a.select do |s|
+        s.end_date.present? && s.end_date > Time.now
+      end
     end
 
     def schemes_hash

@@ -14,7 +14,7 @@ module SellerService
     end
 
     def attributes(version)
-      profile = version.seller.last_profile_version
+      profile = version.last_profile_version
 
       result = {
         id: version.seller_id,

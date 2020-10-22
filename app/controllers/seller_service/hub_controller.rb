@@ -31,7 +31,7 @@ module SellerService
       page = (params[:page] || 1).to_i
       rpp = params[:rpp].to_i
 
-      rpp = 100 unless rpp >= 10 && rpp <= 100
+      rpp = 100 unless rpp >= 5 && rpp <= 100
 
       if params[:order] == 'abn'
         @seller_versions = scoped_seller_versions.order(:abn)

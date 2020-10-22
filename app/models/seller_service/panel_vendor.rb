@@ -60,9 +60,6 @@ module SellerService
           next unless abn.present? && ABN.valid?(abn)
           abn = ABN.new(abn).to_s
 
-          sv = SellerVersion.where(state: [:pending, :approved], abn: abn).order(id: :desc).first
-          sv ||= SellerVersion.where(abn: abn).where.not(state: :archived).order(id: :desc).first
-
           scheme = SellerService::SupplierScheme.find_or_initialize_by(
             scheme_id: pv.fields['SchemeID']
           )
@@ -71,6 +68,9 @@ module SellerService
           scheme.save if scheme.has_changes_to_save?
 
           SellerService::Seller.transaction do
+            sv = SellerVersion.where(state: [:pending, :approved], abn: abn).order(id: :desc).first
+            sv ||= SellerVersion.where(abn: abn).where.not(state: :archived).order(id: :desc).first
+
             if sv
               # FIXME: here scheme is being added only to one version.
               # If version is in draft or pending, it should be added to two versions

@@ -132,7 +132,7 @@ module SellerService
             u = ::User.find_by(uuid: row['RegisteredUserUUID'])
             u ||= ::User.find_or_initialize_by(email: row['RegisteredUserEmail'].downcase)
             name = (row['RegisteredUserGivenName'].to_s + ' ' + row['RegisteredUserSurname'].to_s).
-              gsub(/[()]/, '').gsub(/ +/, ' ').strip
+              gsub(/[^a-zA-Z0-9 .'\-]/, ' ').gsub(/ +/, ' ').strip
             u.full_name ||= name if name.present?
             u.password = u.password_confirmation = SecureRandom.hex(32) unless u.persisted?
 

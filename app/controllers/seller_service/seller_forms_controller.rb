@@ -13,6 +13,7 @@ module SellerService
       form.save(@seller.draft_version)
       form.update_field_statuses(@seller)
       if form.valid?
+        UserService::SyncTendersTeamJob.perform_later @seller.id
         render json: form.attributes, status: :created
       else
         render json: { errors: [ form.rejections(@seller).merge(form.validation_errors) ] }, status: :unprocessable_entity

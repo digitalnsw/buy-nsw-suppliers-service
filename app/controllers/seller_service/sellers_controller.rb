@@ -19,16 +19,14 @@ module SellerService
 
     def create
       raise SharedModules::MethodNotAllowed unless session_user.is_seller?
-      if session_user.seller_id
-        @seller = SellerService::Seller.where(id: session_user.seller_id).first
-      else
-        SellerService::Seller.transaction do
-          @seller = SellerService::Seller.new(state: :draft)
-          @seller.save!
-          SharedResources::RemoteUser.add_to_team(session_user.id, @seller.id, [:owner])
-          @seller.versions.create!(state: :draft, name: '', started_at: Time.now)
-        end
+
+      SellerService::Seller.transaction do
+        @seller = SellerService::Seller.new(state: :draft)
+        @seller.save!
+        SharedResources::RemoteUser.add_to_team(session_user.id, @seller.id, [:owner])
+        @seller.versions.create!(state: :draft, name: '', started_at: Time.now)
       end
+
       update_session_user(seller_id: @seller.id, seller_status: @seller.status)
 
       render json: serializer.show, status: :created, location: @seller, root: true

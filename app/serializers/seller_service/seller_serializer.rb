@@ -28,6 +28,7 @@ module SellerService
         full_sanitize_recursive({
           id: seller.id,
           name: version&.name,
+          abn: version&.abn,
           status: seller.status,
           live: seller.live?,
           canBeWithdrawn: seller.can_be_withdrawn?,

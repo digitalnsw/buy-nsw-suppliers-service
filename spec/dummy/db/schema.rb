@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_12_125124) do
+ActiveRecord::Schema.define(version: 2020_10_30_233910) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -40,6 +40,24 @@ ActiveRecord::Schema.define(version: 2020_09_12_125124) do
     t.string "contact_number"
     t.datetime "discarded_at"
     t.index ["discarded_at"], name: "index_buyer_applications_on_discarded_at"
+  end
+
+  create_table "buyer_domains", force: :cascade do |t|
+    t.string "organisation"
+    t.string "domain", null: false
+    t.datetime "discarded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["domain"], name: "index_buyer_domains_on_domain", unique: true
+  end
+
+  create_table "buyer_emails", force: :cascade do |t|
+    t.string "organisation"
+    t.string "email", null: false
+    t.datetime "discarded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_buyer_emails_on_email", unique: true
   end
 
   create_table "data_migrations", id: false, force: :cascade do |t|
@@ -115,17 +133,19 @@ ActiveRecord::Schema.define(version: 2020_09_12_125124) do
   end
 
   create_table "notifications", force: :cascade do |t|
-    t.bigint "user_id"
     t.string "subject"
     t.text "body"
     t.string "fa_icon"
     t.datetime "discarded_at"
-    t.datetime "postponed_for"
     t.json "actions"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "seen"
-    t.index ["user_id"], name: "index_notifications_on_user_id"
+    t.string "token"
+    t.datetime "expiry", null: false
+    t.integer "recipients", default: [], array: true
+    t.string "unifier"
+    t.index ["unifier"], name: "index_notifications_on_unifier"
   end
 
   create_table "panel_vendors", force: :cascade do |t|
@@ -135,6 +155,10 @@ ActiveRecord::Schema.define(version: 2020_09_12_125124) do
     t.datetime "updated_at", null: false
     t.string "email", null: false
     t.string "abn", null: false
+    t.string "scheme_id"
+    t.index ["abn"], name: "index_panel_vendors_on_abn"
+    t.index ["email"], name: "index_panel_vendors_on_email"
+    t.index ["scheme_id"], name: "index_panel_vendors_on_scheme_id"
     t.index ["uuid"], name: "index_panel_vendors_on_uuid", unique: true
   end
 
@@ -360,6 +384,7 @@ ActiveRecord::Schema.define(version: 2020_09_12_125124) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "email"
+    t.index ["email"], name: "index_registered_users_on_email"
     t.index ["uuid"], name: "index_registered_users_on_uuid", unique: true
   end
 
@@ -396,7 +421,6 @@ ActiveRecord::Schema.define(version: 2020_09_12_125124) do
     t.json "references"
     t.json "case_studies"
     t.json "government_credentials"
-    t.json "schemes_and_panels"
     t.json "team_members"
     t.json "promotional_video"
     t.bigint "seller_id"
@@ -505,7 +529,6 @@ ActiveRecord::Schema.define(version: 2020_09_12_125124) do
     t.string "representative_last_name", default: ""
     t.boolean "offers_ict"
     t.integer "profile_address_index", default: 0
-    t.json "schemes_and_panels", default: []
     t.string "contact_position"
     t.string "abn_exempt", default: "non-exempt"
     t.string "abn_exempt_reason"
@@ -513,6 +536,7 @@ ActiveRecord::Schema.define(version: 2020_09_12_125124) do
     t.index ["discarded_at"], name: "index_seller_versions_on_discarded_at"
     t.index ["edited_by_id"], name: "index_seller_versions_on_edited_by_id"
     t.index ["next_version_id"], name: "index_seller_versions_on_next_version_id"
+    t.index ["state"], name: "index_seller_versions_on_state"
   end
 
   create_table "sellers", force: :cascade do |t|
@@ -521,19 +545,24 @@ ActiveRecord::Schema.define(version: 2020_09_12_125124) do
     t.datetime "updated_at", null: false
     t.datetime "discarded_at"
     t.string "uuid"
+    t.integer "ru_uuid"
     t.index ["discarded_at"], name: "index_sellers_on_discarded_at"
+    t.index ["ru_uuid"], name: "index_sellers_on_ru_uuid"
+    t.index ["uuid"], name: "index_sellers_on_uuid"
   end
 
   create_table "supplier_schemes", force: :cascade do |t|
     t.string "title"
-    t.string "number"
-    t.string "arrangement"
-    t.string "scope"
-    t.string "use"
-    t.string "path"
-    t.string "url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "scheme_id", null: false
+    t.string "category"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.datetime "close_date"
+    t.datetime "publish_date"
+    t.string "rft_uuid"
+    t.index ["scheme_id"], name: "index_supplier_schemes_on_scheme_id"
   end
 
   create_table "telco_service_telco_product_versions", force: :cascade do |t|
@@ -566,6 +595,8 @@ ActiveRecord::Schema.define(version: 2020_09_12_125124) do
     t.datetime "updated_at", null: false
     t.datetime "closed_at"
     t.datetime "late_closed_at"
+    t.index ["closed_at"], name: "index_tenders_on_closed_at"
+    t.index ["late_closed_at"], name: "index_tenders_on_late_closed_at"
     t.index ["uuid"], name: "index_tenders_on_uuid", unique: true
   end
 
@@ -606,11 +637,12 @@ ActiveRecord::Schema.define(version: 2020_09_12_125124) do
     t.integer "seller_ids", default: [], array: true
     t.boolean "suspended", default: false
     t.boolean "opted_out", default: false
-    t.json "permissions", default: {}
+    t.json "permissions", default: {}, null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["uuid"], name: "index_users_on_uuid"
   end
 
   create_table "waiting_sellers", force: :cascade do |t|
@@ -643,7 +675,6 @@ ActiveRecord::Schema.define(version: 2020_09_12_125124) do
   add_foreign_key "buyer_applications", "users"
   add_foreign_key "documents", "sellers"
   add_foreign_key "documents", "users", column: "uploaded_by_id"
-  add_foreign_key "notifications", "users"
   add_foreign_key "product_field_statuses", "products"
   add_foreign_key "product_versions", "documents", column: "terms_id"
   add_foreign_key "product_versions", "product_versions", column: "next_version_id"

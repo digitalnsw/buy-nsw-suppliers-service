@@ -1,6 +1,7 @@
 module SellerService
   class PanelVendor < ApplicationRecord
     self.table_name = 'panel_vendors'
+    belongs_to :scheme, class_name: 'SellerService::SupplierScheme', foreign_key: 'scheme_id', primary_key: 'scheme_id'
 
     def self.convert_state fields
       if fields['Country'].present? && fields['Country'].upcase != 'AUSTRALIA'
@@ -54,11 +55,11 @@ module SellerService
 
           pv.abn = abn
           pv.email = row['Email'].downcase
+          pv.scheme_id = row['SchemeID'].strip
           pv.fields = row
-          pv.save!
 
           scheme = SellerService::SupplierScheme.find_or_initialize_by(
-            scheme_id: pv.fields['SchemeID']
+            scheme_id: pv.scheme_id
           )
           scheme.category = pv.fields['SchemeCategory']
           scheme.title = pv.fields['SchemeTitle']
@@ -70,9 +71,6 @@ module SellerService
             rel = SellerVersion.where(state: [:pending, :approved], abn: abn)
             if rel.exists?
               rel.each do |sv|
-                sv.schemes_and_panels |= [ scheme.id ] if scheme.id
-                sv.save! if sv.has_changes_to_save?
-                seller = sv.seller
                 seller.update_attributes!(uuid: pv.uuid) if seller.uuid.nil?
               end
             end

@@ -1,6 +1,8 @@
 module SellerService
   class SupplierScheme < SellerService::ApplicationRecord
     self.table_name = 'supplier_schemes'
+    scope :current, -> { where("end_date is not null and end_date > ?", Time.now) }
+
     def serialized
       {
         id: self.id,

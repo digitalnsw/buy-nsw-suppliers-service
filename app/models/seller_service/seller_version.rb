@@ -55,7 +55,8 @@ module SellerService
     has_one :previous_version, class_name: 'SellerService::SellerVersion', foreign_key: :next_version_id, inverse_of: :next_version
     has_many :profile_versions, through: :seller
     has_one :last_profile_version, through: :seller
-
+    has_many :panel_vendors, class_name: 'SellerService::PanelVendor', foreign_key: 'abn', primary_key: 'abn'
+    has_many :schemes, class_name: 'SellerService::SupplierScheme', through: :panel_vendors
 
     validates :started_at, presence: true
 

@@ -5,22 +5,10 @@ module SellerService
       @buyer_view = buyer_view
       @seller_version = seller_version
       @seller_versions = seller_versions
-      @schemes = SellerService::SupplierScheme.all.to_a.select do |s|
-        s.end_date.present? && s.end_date > Time.now
-      end
-    end
-
-    def schemes_hash
-      @schemes_hash ||= @schemes.map { |scheme|
-        [ scheme.id, scheme.serialized ]
-      }.to_h
     end
 
     def attributes(version)
       profile = version.last_profile_version
-      all_schemes = SellerService::SupplierScheme.all.map {|scheme|
-        [ scheme.id, scheme.serialized ]
-      }.to_h
       result = {
         id: version.seller_id,
         tags: {
@@ -47,7 +35,7 @@ module SellerService
             name: field.humanize,
           }
         },
-        schemes_and_panels: version.schemes_and_panels&.map{|s_id| schemes_hash[s_id]}.compact,
+        schemes_and_panels: version.schemes.current.uniq.map(&:serialized),
       }.merge(full_sanitize_recursive version.attributes.slice(
         "name",
         "abn",

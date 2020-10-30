@@ -70,7 +70,7 @@ module SellerService
         @seller = SellerService::Seller.where(id: session_user.seller_id).first
         render json: serializer.show
       elsif params[:myProfiles]
-        @sellers = SellerService::Seller.where(id: session_user&.seller_ids)
+        @sellers = SellerService::Seller.where(id: session_user&.seller_ids).preload(last_version: :schemes)
         render json: serializer.index
       else
         render json: {}

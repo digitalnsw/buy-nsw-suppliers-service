@@ -386,6 +386,7 @@ module SellerService
     end
 
     def document_fields
+      # FIXME: should financial expiry move here?
       [
         :financial_statement_ids,
         :professional_indemnity_certificate_ids,
@@ -394,7 +395,6 @@ module SellerService
         :workers_compensation_certificate_expiry,
         :product_liability_certificate_ids,
         :product_liability_certificate_expiry,
-        :schemes_and_panels,
       ]
     end
 

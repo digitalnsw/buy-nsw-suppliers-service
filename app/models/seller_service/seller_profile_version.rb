@@ -6,7 +6,7 @@ module SellerService
       :accreditations, :licenses, :engagements, :awards,
       :methodologies, :knowledge_base, :quality_control, :security,
       :references, :case_studies, :government_credentials,
-      :schemes_and_panels, :team_members 
+      :team_members
     ]
 
     self.table_name = 'seller_profile_versions'

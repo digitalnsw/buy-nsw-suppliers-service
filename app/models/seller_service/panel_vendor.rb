@@ -71,7 +71,7 @@ module SellerService
             rel = SellerVersion.where(state: [:pending, :approved], abn: abn)
             if rel.exists?
               rel.each do |sv|
-                seller.update_attributes!(uuid: pv.uuid) if seller.uuid.nil?
+                sv.seller.update_attributes!(uuid: pv.uuid) if sv.seller.uuid.nil?
               end
             end
           end

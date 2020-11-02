@@ -7,6 +7,9 @@ module SellerService::Account
     field :establishment_date, type: :date
     field :seller_id, usage: :back_end
     field :can_join, usage: :front_end
+    field :can_join_business, usage: :front_end
+    field :can_join_abn, usage: :front_end
+    field :can_join_contact, usage: :front_end
 
     validates_presence_of :name
     validates :name, format: { with: /\A[A-Za-z0-9 .,'":;+~*\-_|()@#$%&\/\s]{0,100}\z/ }
@@ -38,7 +41,7 @@ module SellerService::Account
       if abn.present? && ABN.valid?(abn.gsub(/\s+/, "")) && SharedModules::Abr.active?
         r = SharedModules::Abr.lookup abn.gsub(/\s+/, "")
         if r.nil? || r[:status] != 'Active'
-          if r[:status]
+          if r && r[:status]
             errors.add(:abn, "ABN registration is " + r[:status].to_s.downcase)
           else
             errors.add(:abn, "ABN is not registered")
@@ -76,6 +79,9 @@ module SellerService::Account
         end
         if can_join? && !pending_join?
           errors.add(:can_join, true)
+          errors.add(:can_join_business, abn_owner.name)
+          errors.add(:can_join_abn, abn_owner.abn)
+          errors.add(:can_join_contact, abn_owner.contact_first_name + ' ' + abn_owner.contact_last_name)
         end
       end
     end

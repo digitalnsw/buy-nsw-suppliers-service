@@ -73,7 +73,7 @@ module SellerService::Account
     def abn_uniqueness
       if abn_taken?
         if pending_join?
-          errors.add(:abn, "This ABN is not unique, your request to joing this supplier is pending.")
+          errors.add(:abn, "This ABN is not unique, your request to join this supplier is pending.")
         else
           errors.add(:abn, "This ABN is not unique, you or someone from your company may have already created an account with us.")
         end

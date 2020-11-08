@@ -176,13 +176,16 @@ module SellerService
             caption: 'Accept',
             resource: 'remote_user',
             method: 'add_to_team',
-            params: [session_user.id, sv.seller_id],
+            params: [session_user.id, sv.seller_id, [], abn],
             success_message: 'join_request_accepted',
           },
           {
             key: 'decline',
             caption: 'Decline',
             button_class: 'button-secondary',
+            resource: 'remote_user',
+            method: 'request_declined',
+            params: [session_user.id, abn],
             success_message: 'join_request_declined',
           },
         ]

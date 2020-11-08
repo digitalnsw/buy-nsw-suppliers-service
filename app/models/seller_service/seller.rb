@@ -131,7 +131,7 @@ module SellerService
     def valid_actions
       case status
       when :draft
-        [:submit]
+        [:submit, :prefill_from_abr]
       when :pending
         [:withdraw, :assign, :approve, :decline]
       when :archived
@@ -545,10 +545,72 @@ module SellerService
       }
     end
 
-#    def seller_decisions
-#      @seller_decisions ||= last_version.tags.map do |sfs|
-#        [sfs.field.to_sym, sfs]
-#      end.to_h
-#    end
+    def get_public_abr abn
+      r = SharedModules::Abr.lookup(abn)
+      {
+        address: r && {
+          postcode: r[:address_post_code],
+          state: r[:address_state_code],
+        }
+      }
+    rescue => e
+      Airbrake.notify_sync(e.message, {
+        abn: abn,
+        trace: e.backtrace.select{|l|l.match?(/buy-nsw/)},
+      })
+      return {}
+    end
+
+    def get_private_abr abn
+      r = SharedModules::Abr.search(abn)[:data][:response][:current_abn_record]
+      a = r[:main_business_physical_address]
+      c = r[:contact]&.first
+      {
+        address: a && {
+          address_1: a[:address_line1],
+          address_2: a[:address_line2],
+          address_3: '',
+          suburb: a[:suburb],
+          state: a[:state_code],
+          postcode: a[:postcode],
+          country: a[:country_code] || 'AUS',
+        },
+        contact: c && {
+          contact_first_name: c.fetch(:preferred_name,   {})[:given_name],
+          contact_last_name:  c.fetch(:preferred_name,   {})[:family_name],
+          contact_email: c.fetch(:email_address,         {})[:email_address]&.downcase,
+          contact_phone: c.fetch(:business_phone_number, {})[:telephone_number_prefix].to_s +
+                         c.fetch(:business_phone_number, {})[:telephone_number].to_s
+        },
+      }
+    rescue => e
+      Airbrake.notify_sync(e.message, {
+        abn: abn,
+        trace: e.backtrace.select{|l|l.match?(/buy-nsw/)},
+      })
+      return {}
+    end
+
+    def prefill_from_abr(user, props = nil)
+      v = draft_version
+      abn = (props && props[:abn]) || v.abn
+      h = get_public_abr abn
+      v.addresses.push({}) if v.addresses.blank?
+
+      # v.addresses.last[:address_1] = h[:address][:address_1] if v.addresses.last[:address_1].blank?
+      # v.addresses.last[:address_2] = h[:address][:address_2] if v.addresses.last[:address_2].blank?
+      # v.addresses.last[:address_3] = h[:address][:address_3] if v.addresses.last[:address_3].blank?
+      # v.addresses.last[:suburb] = h[:address][:suburb] if v.addresses.last[:suburb].blank?
+      v.addresses.last[:postcode] = h[:address][:postcode] if v.addresses.last[:postcode].blank?
+      v.addresses.last[:state] = h[:address][:state].downcase if v.addresses.last[:state].blank?
+      # if v.addresses.last[:country].blank?
+      #   v.addresses.last[:country] = ISO3166::Country.find_country_by_alpha3(
+      #   h[:address][:country])&.un_locode.to_s
+      # end
+
+      v.save!
+
+      "Draft initiated from ABR search API using ABN: " + abn.to_s
+    end
   end
 end

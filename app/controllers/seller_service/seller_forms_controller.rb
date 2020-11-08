@@ -13,6 +13,7 @@ module SellerService
       form.save(@seller.draft_version)
       form.update_field_statuses(@seller)
       if form.valid?
+        @seller.run_action(:prefill_from_abr, user: session_user) if form.is_a? BusinessNameForm
         UserService::SyncTendersTeamJob.perform_later @seller.id
         render json: form.attributes, status: :created
       else

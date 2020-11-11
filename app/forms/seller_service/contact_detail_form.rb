@@ -55,7 +55,7 @@ module SellerService
       if addresses.blank?
         self.addresses = [{"suburb"=>"", "address"=>"", "address_2"=>"", "address_3"=>"", "postcode"=>"", "country"=>"", "state"=>""}]
       end
-      country = addresses.present? && addresses.first['country'].upcase
+      country = addresses.present? && addresses.first['country']&.upcase
       self.regional = false unless postcode_in_regional_range && country == 'AU'
     end
 

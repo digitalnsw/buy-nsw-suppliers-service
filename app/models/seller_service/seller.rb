@@ -107,7 +107,9 @@ module SellerService
     end
 
     def status
-      if last_version.nil?
+      if deactivated?
+        :deactivated
+      elsif last_version.nil?
         :archived
       elsif has_approved?
         if last_version.draft?
@@ -138,16 +140,16 @@ module SellerService
         []
       when :changes_requested
         [:revise]
-      when :deactivated
-        [:activate]
       when :live
-        [:start_amendment, :deactivate]
+        [:start_amendment, :make_inactive]
       when :amendment_draft
-        [:submit, :cancel, :deactivate]
+        [:submit, :cancel, :make_inactive]
       when :amendment_changes_requested
-        [:revise, :deactivate]
+        [:revise, :make_inactive]
       when :amendment_pending
-        [:withdraw, :deactivate, :assign, :approve, :decline]
+        [:withdraw, :make_inactive, :assign, :approve, :decline]
+      when :deactivated
+        [:make_active]
       end
     end
 
@@ -320,16 +322,16 @@ module SellerService
       "Edits canceled by #{user.email}."
     end
 
-    def deactivate(user, props)
+    def make_inactive(user, props)
       approved_version.deactivate!
       self.deactivate!
-      "Seller deactivated by #{user.email}."
+      "Seller deactivated by #{user.email}. Response was: #{props[:response]}."
     end
 
-    def activate(user, props)
+    def make_active(user, props)
       self.activate!
       deactivated_version.activate!
-      "Seller activated by #{user.email}."
+      "Seller activated by #{user.email}. Response was: #{props[:response]}."
     end
 
     def revise(user, props)
@@ -373,6 +375,13 @@ module SellerService
         :corporate_structure,
         :business_structure,
         :services,
+        :financial_statement_expiry,
+      ]
+    end
+
+    # FIXME: should financial expiry move here?
+    def auditable_fields
+      [
         :receivership,
         :receivership_details,
         :bankruptcy,
@@ -381,13 +390,7 @@ module SellerService
         :investigations_details,
         :legal_proceedings,
         :legal_proceedings_details,
-        :financial_statement_expiry,
-      ]
-    end
 
-    def document_fields
-      # FIXME: should financial expiry move here?
-      [
         :financial_statement_ids,
         :professional_indemnity_certificate_ids,
         :professional_indemnity_certificate_expiry,
@@ -404,16 +407,16 @@ module SellerService
       end
     end
 
-    def document_fields_edited?
+    def auditable_fields_edited?
       seller_field_statuses.any? do |tag|
-        document_fields.include?(tag.field.to_sym) && tag.status != 'accepted'
+        auditable_fields.include?(tag.field.to_sym) && tag.status != 'accepted'
       end
     end
 
     def auto_partial_approve!
       version = pending_version || draft_version
 
-      if document_fields_edited?
+      if auditable_fields_edited?
         create_version(version, new_version_state: 'pending')
         save_field_statuses(base_fields.map{|f| [f, 'accepted'] }.to_h, version)
         update_pending_version(version)
@@ -437,7 +440,7 @@ module SellerService
           auto_partial_approve!
         end
 
-        if document_fields_edited?
+        if auditable_fields_edited?
           auto_submit!
         end
       end
@@ -446,9 +449,27 @@ module SellerService
 
     def auto_approve!
       create_profile(pending_version)
-      save_field_statuses((base_fields+document_fields).map{|f| [f, 'accepted'] }.to_h)
+      save_field_statuses((base_fields+auditable_fields).map{|f| [f, 'accepted'] }.to_h)
       pending_version.approve!
       make_live!
+    end
+
+    def no_legal_issue
+      [
+        :receivership,
+        :bankruptcy,
+        :investigations,
+        :legal_proceedings,
+      ].none? do |field|
+        pending_version.send(field)
+      end
+    end
+
+    def auto_review!
+      if !approved_version && no_legal_issue
+        auto_approve!
+        create_event(user, "Seller self approved by #{user.email}")
+      end
     end
 
     def submit(user, props)
@@ -461,10 +482,7 @@ module SellerService
         :seller_version_submitted.to_s
       )
 
-      unless approved_version
-        auto_approve!
-        create_event(user, "Seller self approved by #{user.email}")
-      end
+      auto_review!
 
       "Seller submitted by #{user.email}."
     end
@@ -598,11 +616,17 @@ module SellerService
       v.addresses.push({}) if v.addresses.blank?
 
       # v.addresses.last[:address_1] = h[:address][:address_1] if v.addresses.last[:address_1].blank?
+      v.addresses.last[:address_1] = '' if v.addresses.last[:address_1].nil?
       # v.addresses.last[:address_2] = h[:address][:address_2] if v.addresses.last[:address_2].blank?
+      v.addresses.last[:address_2] = '' if v.addresses.last[:address_2].nil?
       # v.addresses.last[:address_3] = h[:address][:address_3] if v.addresses.last[:address_3].blank?
+      v.addresses.last[:address_3] = '' if v.addresses.last[:address_3].nil?
       # v.addresses.last[:suburb] = h[:address][:suburb] if v.addresses.last[:suburb].blank?
+      v.addresses.last[:suburb] = '' if v.addresses.last[:suburb].nil?
       v.addresses.last[:postcode] = h[:address][:postcode] if v.addresses.last[:postcode].blank?
       v.addresses.last[:state] = h[:address][:state].downcase if v.addresses.last[:state].blank?
+      v.addresses.last[:country] = '' if v.addresses.last[:country].nil?
+
       # if v.addresses.last[:country].blank?
       #   v.addresses.last[:country] = ISO3166::Country.find_country_by_alpha3(
       #   h[:address][:country])&.un_locode.to_s

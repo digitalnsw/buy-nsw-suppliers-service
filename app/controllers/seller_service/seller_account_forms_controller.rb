@@ -25,7 +25,7 @@ module SellerService
       form = form_class.new params[key], version
       form.session_user = session_user
 
-      if form_name.in?([:insurance_document, :financial_document]) &&
+      if form_name.in?([:insurance_document, :financial_document, :legal_disclosure]) &&
           form.status(@seller) == :pending_locked
         raise SharedModules::MethodNotAllowed
       end

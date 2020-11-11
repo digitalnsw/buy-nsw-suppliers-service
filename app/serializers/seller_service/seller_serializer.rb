@@ -20,6 +20,7 @@ module SellerService
           id: seller.id,
           name: version&.name,
           abn: version&.abn,
+          response: version&.response,
           status: seller.status,
           live: seller.live?,
           canBeWithdrawn: seller.can_be_withdrawn?,

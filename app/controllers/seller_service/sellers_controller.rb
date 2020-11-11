@@ -2,12 +2,21 @@ require_dependency "seller_service/application_controller"
 
 module SellerService
   class SellersController < SellerService::ApplicationController
-    skip_before_action :verify_authenticity_token, raise: false, only: [:approve, :decline, :assign]
-    before_action :authenticate_service, only: [:approve, :decline, :assign, :destroy]
+    skip_before_action :verify_authenticity_token, raise: false, only: [:approve,
+                                                                        :decline,
+                                                                        :assign,
+                                                                        :activate,
+                                                                        :deactivate]
+    before_action :authenticate_service, only: [:approve,
+                                                :decline,
+                                                :assign,
+                                                :destroy,
+                                                :activate,
+                                                :deactivate]
     before_action :authenticate_service_or_user, only: [:show, :all_services]
-    before_action :authenticate_user, except: [:show, :all_services, :approve, :decline, :assign, :join]
+    before_action :authenticate_user, except: [:show, :all_services, :approve, :decline, :assign, :join, :activate, :deactivate]
     before_action :set_seller, only: [:show, :update, :destroy, :all_services]
-    before_action :set_seller_by_id, only: [:approve, :decline, :assign]
+    before_action :set_seller_by_id, only: [:approve, :decline, :assign, :activate, :deactivate]
 
     def serializer
       SellerService::SellerSerializer.new(seller: @seller, sellers: @sellers, export_enc: export?, user: session_user)
@@ -39,6 +48,7 @@ module SellerService
     def steps
       raise SharedModules::MethodNotAllowed unless session_user&.is_seller? && session_user&.seller_id
       seller = SellerService::Seller.where(id: session_user.seller_id).first
+      raise SharedModules::NotFound if seller.nil?
       raise SharedModules::MethodNotAllowed if params[:account] && !seller.live?
       forms = params[:account] ? SellerService::Seller.account_forms : SellerService::Seller.forms
       render json: (forms.map { |k, v|
@@ -105,7 +115,14 @@ module SellerService
     end
 
     def submit
-      run_operation(:submit)
+      set_seller
+      @seller.run_action(:submit, user: session_user)
+      update_session_user(seller_status: @seller.status)
+      if @seller.live?
+        render json: { success: true, message: 'application_success' }
+      else
+        render json: { success: true, message: 'application_pending' }
+      end
       UserService::SyncTendersTeamJob.perform_later @seller.id
     end
 
@@ -126,11 +143,11 @@ module SellerService
     end
 
     def activate
-      run_operation(:activate)
+      run_admin_operation(:make_active)
     end
 
     def deactivate
-      run_operation(:deactivate)
+      run_admin_operation(:make_inactive)
     end
 
     def approve

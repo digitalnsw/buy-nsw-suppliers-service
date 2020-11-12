@@ -465,10 +465,10 @@ module SellerService
       end
     end
 
-    def auto_review!
+    def auto_review!(user)
       if !approved_version && no_legal_issue
         auto_approve!
-        create_event(user, "Seller self approved by #{user.email}")
+        create_event(user, "Seller auto approved by #{user.email}")
       end
     end
 
@@ -482,7 +482,7 @@ module SellerService
         :seller_version_submitted.to_s
       )
 
-      auto_review!
+      auto_review!(user)
 
       "Seller submitted by #{user.email}."
     end

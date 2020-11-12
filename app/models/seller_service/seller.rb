@@ -615,8 +615,8 @@ module SellerService
       h = get_public_abr abn
       v.addresses.push({}) if v.addresses.blank?
 
-      # v.addresses.last[:address_1] = h[:address][:address_1] if v.addresses.last[:address_1].blank?
-      v.addresses.last[:address_1] = '' if v.addresses.last[:address_1].nil?
+      # v.addresses.last[:address] = h[:address][:address_1] if v.addresses.last[:address].blank?
+      v.addresses.last[:address] = '' if v.addresses.last[:address].nil?
       # v.addresses.last[:address_2] = h[:address][:address_2] if v.addresses.last[:address_2].blank?
       v.addresses.last[:address_2] = '' if v.addresses.last[:address_2].nil?
       # v.addresses.last[:address_3] = h[:address][:address_3] if v.addresses.last[:address_3].blank?

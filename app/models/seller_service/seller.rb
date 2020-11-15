@@ -617,20 +617,24 @@ module SellerService
 
       # v.addresses.last[:address] = h[:address][:address_1] if v.addresses.last[:address].blank?
       v.addresses.last[:address] = '' if v.addresses.last[:address].nil?
+
       # v.addresses.last[:address_2] = h[:address][:address_2] if v.addresses.last[:address_2].blank?
       v.addresses.last[:address_2] = '' if v.addresses.last[:address_2].nil?
+
       # v.addresses.last[:address_3] = h[:address][:address_3] if v.addresses.last[:address_3].blank?
       v.addresses.last[:address_3] = '' if v.addresses.last[:address_3].nil?
+
       # v.addresses.last[:suburb] = h[:address][:suburb] if v.addresses.last[:suburb].blank?
       v.addresses.last[:suburb] = '' if v.addresses.last[:suburb].nil?
+
       v.addresses.last[:postcode] = h[:address][:postcode] if v.addresses.last[:postcode].blank?
-      v.addresses.last[:state] = h[:address][:state].downcase if v.addresses.last[:state].blank?
-      v.addresses.last[:country] = '' if v.addresses.last[:country].nil?
+      v.addresses.last[:state] = h[:address][:state]&.downcase if v.addresses.last[:state].blank?
 
       # if v.addresses.last[:country].blank?
       #   v.addresses.last[:country] = ISO3166::Country.find_country_by_alpha3(
       #   h[:address][:country])&.un_locode.to_s
       # end
+      v.addresses.last[:country] = '' if v.addresses.last[:country].nil?
 
       v.save!
 

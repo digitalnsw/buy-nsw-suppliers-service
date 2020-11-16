@@ -58,7 +58,7 @@ module SellerService
       key = params.keys.find{|k|k.to_s.starts_with?("sellerProfile/")}
       form = form_class(params[:form_name]).new params[key], @profile_version
       if form.valid?
-        @profile_version = @seller.create_profile_version
+        @profile_version = @seller.create_profile_version(session_user)
         form.save(@profile_version)
         @seller.update_search_columns(@profile_version) if params[:form_name].to_sym.in?(
           [:search_description, :company_description]

@@ -270,7 +270,7 @@ module SellerService
       save_field_statuses(props[:field_statuses])
     end
 
-    def create_profile(version)
+    def create_profile(version, user)
       profile = SellerService::SellerProfileVersion.new(version.attributes.slice(
         "flagship_product",
         "summary",
@@ -288,12 +288,13 @@ module SellerService
         "awards",
       ))
       profile.seller = version.seller
+      profile.edited_by_id = user.id
       profile.save!
     end
 
     def approve(user, props)
       decide(user, props)
-      create_profile(pending_version) unless approved_version
+      create_profile(pending_version, user) unless approved_version
       approved_version.archive! if approved_version
       pending_version.approve!
       self.make_live! if self.draft?
@@ -448,8 +449,8 @@ module SellerService
       create_event(user, "Seller self approved by #{user.email}")
     end
 
-    def auto_approve!
-      create_profile(pending_version)
+    def auto_approve!(user)
+      create_profile(pending_version, user)
       save_field_statuses((base_fields+auditable_fields).map{|f| [f, 'accepted'] }.to_h)
       pending_version.approve!
       make_live!
@@ -468,7 +469,7 @@ module SellerService
 
     def auto_review!(user)
       if !approved_version && no_legal_issue
-        auto_approve!
+        auto_approve!(user)
         create_event(user, "Seller auto approved by #{user.email}")
       end
     end
@@ -517,16 +518,18 @@ module SellerService
       self.class.forms
     end
 
-    def create_profile_version
+    def create_profile_version(user)
       copy = nil
       SellerService::SellerProfileVersion.transaction do
         v = last_profile_version
-        copy = SellerService::SellerProfileVersion.create!(v.attributes.except(
+        copy = SellerService::SellerProfileVersion.new(v.attributes.except(
           "id",
           "next_version_id",
           "created_at",
           "updated_at",
         ))
+        copy.edited_by_id = user.id
+        copy.save!
 
         v.update_attributes(next_version: copy)
       end

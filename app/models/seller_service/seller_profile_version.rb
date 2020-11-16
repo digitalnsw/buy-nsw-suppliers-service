@@ -13,6 +13,7 @@ module SellerService
     acts_as_paranoid column: :discarded_at
 
     belongs_to :seller, class_name: 'SellerService::Seller'
+    belongs_to :edited_by, class_name: "User", optional: true
     belongs_to :next_version, class_name: 'SellerService::SellerProfileVersion', optional: true
     has_one :previous_version, class_name: 'SellerService::SellerProfileVersion', foreign_key: :next_version_id
   end

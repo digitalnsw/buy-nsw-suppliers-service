@@ -50,6 +50,7 @@ module SellerService
     alias_attribute :created_at, :created_on
     alias_attribute :updated_at, :updated_on
 
+    belongs_to :edited_by, class_name: "User", optional: true
     belongs_to :seller, class_name: "SellerService::Seller", inverse_of: :versions
 
     belongs_to :next_version, class_name: 'SellerService::SellerVersion', optional: true, inverse_of: :previous_version

@@ -11,6 +11,7 @@ module SellerService
       form.session_user = session_user
       raise SharedModules::AlertError.new("Invalid form submission, please refresh the page.") if @seller.draft_version.blank?
       form.save(@seller.draft_version)
+      @seller.draft_version.update_attributes!(edited_by_id: session_user.id)
       form.update_field_statuses(@seller)
       if form.valid?
         @seller.run_action(:prefill_from_abr, user: session_user) if form.is_a? BusinessNameForm

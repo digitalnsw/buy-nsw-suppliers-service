@@ -25,7 +25,9 @@ module SellerService
           live: seller.live?,
           canBeWithdrawn: seller.can_be_withdrawn?,
           lastProfileUpdate: profile&.updated_at&.strftime("%d %B %Y"),
+          lastProfileEditedBy: profile&.edited_by&.full_name,
           lastAccountUpdate: version&.updated_at&.strftime("%d %B %Y"),
+          lastAccountEditedBy: version&.edited_by&.full_name,
           schemes_and_panels: version&.schemes&.current&.uniq&.map(&:serialized),
         })
       end

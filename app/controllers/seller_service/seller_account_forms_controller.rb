@@ -32,6 +32,7 @@ module SellerService
 
       if form.valid?
         form.save(version)
+        version.update_attributes!(edited_by_id: session_user.id)
         form.update_field_statuses(@seller)
 
         @seller.auto_partial_approve_or_submit!(version, session_user)

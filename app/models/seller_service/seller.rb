@@ -413,7 +413,7 @@ module SellerService
       end
     end
 
-    def auto_partial_approve!
+    def auto_partial_approve!(user)
       version = pending_version || draft_version
 
       if auditable_fields_edited?
@@ -426,6 +426,7 @@ module SellerService
 
       approved_version.archive!
       version.submit! if version.draft?
+      version.update_attributes!(submitted_by_id: user.id)
       version.approve!
       reload
     end
@@ -437,7 +438,7 @@ module SellerService
     def auto_partial_approve_or_submit! version, user
       SellerService::Seller.transaction do
         if base_fields_edited?
-          auto_partial_approve!
+          auto_partial_approve!(user)
         end
 
         if auditable_fields_edited?

@@ -17,7 +17,7 @@ module SellerService
 
     def scoped_seller_versions
       SellerService::SellerVersion.approved.
-        includes(:last_profile_version).preload(:schemes).yield_self do |rel|
+        includes(:last_profile_version).preload(:schemes, :capabilities).yield_self do |rel|
         [
           :category,
           :services,

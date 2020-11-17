@@ -36,6 +36,7 @@ module SellerService
           }
         },
         schemes_and_panels: version.schemes.current.uniq.map(&:serialized),
+        capabilities: version.capabilities.current.uniq.map(&:serialized),
       }.merge(full_sanitize_recursive version.attributes.slice(
         "name",
         "abn",

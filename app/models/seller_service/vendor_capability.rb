@@ -7,7 +7,6 @@ module SellerService
       {
         id: self.id,
         title: self.title,
-        abn: self.abn,
       }
     end
 

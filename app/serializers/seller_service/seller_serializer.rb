@@ -29,6 +29,7 @@ module SellerService
           lastAccountUpdate: version&.updated_at&.strftime("%d %B %Y"),
           lastAccountEditedBy: version&.edited_by&.full_name,
           schemes_and_panels: version&.schemes&.current&.uniq&.map(&:serialized),
+          capabilities: version&.capabilities&.current&.uniq&.map(&:serialized),
         })
       end
     end

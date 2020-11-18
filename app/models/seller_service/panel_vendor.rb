@@ -57,6 +57,7 @@ module SellerService
           pv.email = row['Email'].downcase
           pv.scheme_id = row['SchemeID'].strip
           pv.fields = row
+          pv.save!
 
           scheme = SellerService::SupplierScheme.find_or_initialize_by(
             scheme_id: pv.scheme_id

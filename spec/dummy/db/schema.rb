@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_30_233910) do
+ActiveRecord::Schema.define(version: 2020_11_17_115704) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -428,6 +428,8 @@ ActiveRecord::Schema.define(version: 2020_10_30_233910) do
     t.datetime "updated_at", null: false
     t.bigint "next_version_id"
     t.datetime "discarded_at"
+    t.bigint "edited_by_id"
+    t.index ["edited_by_id"], name: "index_seller_profile_versions_on_edited_by_id"
     t.index ["next_version_id"], name: "index_seller_profile_versions_on_next_version_id"
     t.index ["seller_id"], name: "index_seller_profile_versions_on_seller_id"
   end
@@ -643,6 +645,18 @@ ActiveRecord::Schema.define(version: 2020_10_30_233910) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["uuid"], name: "index_users_on_uuid"
+  end
+
+  create_table "vendor_capabilities", force: :cascade do |t|
+    t.string "uuid"
+    t.string "abn"
+    t.string "title"
+    t.datetime "end_date"
+    t.json "fields"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["abn"], name: "index_vendor_capabilities_on_abn"
+    t.index ["uuid"], name: "index_vendor_capabilities_on_uuid"
   end
 
   create_table "waiting_sellers", force: :cascade do |t|

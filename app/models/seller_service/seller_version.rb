@@ -652,7 +652,8 @@ module SellerService
         "not_for_profit" => "not_for_profit = true",
         "regional" => "regional = true",
         "sme" => "sme = true",
-        "govdc" => "govdc = true"
+        "govdc" => "govdc = true",
+        "australian_owned" => "australian_owned = true",
       }
       sql = identifiers.map{|i| scope_sqls[i]}.join(' or ')
       where("(#{sql})")

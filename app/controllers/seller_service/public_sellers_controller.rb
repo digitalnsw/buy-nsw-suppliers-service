@@ -84,7 +84,7 @@ module SellerService
     def filters
       {
         services: category_services,
-        identifiers: [ "start_up", "disability", "indigenous", "not_for_profit", "regional", "sme", "govdc" ],
+        identifiers: [ "start_up", "disability", "indigenous", "not_for_profit", "regional", "sme", "australian_owned" ],
         locations: [ "nsw", "au", "nz", "int" ],
         company_size: [ "1to19", "20to49", "50to99", "200plus" ],
         profile: [ "case-studies", "references", "government-projects" ],

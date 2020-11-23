@@ -17,7 +17,7 @@ module SellerService::Account
     end
 
     def before_save
-      self.services = SellerService::SellerVersion.break_levels(services).flatten
+      self.services &= SellerService::SellerVersion.break_levels(services).flatten
     end
   end
 end

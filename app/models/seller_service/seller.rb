@@ -373,7 +373,7 @@ module SellerService
         :regional,
         :indigenous,
         :disability,
-        :corporate_structure,
+        # :corporate_structure,
         :business_structure,
         :services,
         :financial_statement_expiry,

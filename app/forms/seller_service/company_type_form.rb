@@ -12,7 +12,7 @@ module SellerService
     field :indigenous
     field :disability
 
-    field :corporate_structure, usage: :back_end
+    field :addresses, usage: :back_end
     field :establishment_date, usage: :back_end
 
     field :can_be_startup, usage: :front_end
@@ -42,13 +42,13 @@ module SellerService
 
     def after_load
       self.can_be_startup = establishment_date_in_range 
-      self.overseas = corporate_structure == 'overseas'
+      self.overseas = addresses.blank? || !addresses.first['country'].in?(['AU','NZ'])
       self.start_up = false unless establishment_date_in_range
       self.sme = false if number_of_employees == '200plus' || overseas
     end
 
     def before_save
-      self.overseas = corporate_structure == 'overseas'
+      self.overseas = addresses.blank? || !addresses.first['country'].in?(['AU','NZ'])
       self.sme = false if number_of_employees == '200plus' || overseas
       self.start_up = false unless establishment_date_in_range
       align_employee_numbers

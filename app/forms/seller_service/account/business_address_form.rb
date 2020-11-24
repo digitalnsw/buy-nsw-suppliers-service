@@ -3,7 +3,6 @@ module SellerService::Account
     field :profile_address_index, feedback: false
     field :addresses, type: :json
     field :regional
-    field :corporate_structure
 
     validates :addresses, 'shared_modules/json': { schema:
       [

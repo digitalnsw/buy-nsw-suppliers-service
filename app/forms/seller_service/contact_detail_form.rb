@@ -7,7 +7,6 @@ module SellerService
     field :contact_position
 
     field :regional
-    field :corporate_structure
 
     field :addresses, type: :json
 

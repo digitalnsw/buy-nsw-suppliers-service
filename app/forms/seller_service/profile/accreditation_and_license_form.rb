@@ -11,14 +11,6 @@ module SellerService::Profile
     validates :licenses, 'shared_modules/json': { schema: ['limited?'] }
     validates :license_document_ids, 'shared_modules/json': { schema: ['document'] }
 
-    validates_presence_of :accreditation_document_ids, if: -> {
-      accreditations.present? && accreditations.select(&:present?).present?
-    }
-
-    validates_presence_of :license_document_ids, if: -> {
-      licenses.present? && licenses.select(&:present?).present?
-    }
-
     def after_load
       self.accreditations ||= []
       self.accreditation_document_ids ||= []

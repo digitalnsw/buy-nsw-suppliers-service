@@ -14,7 +14,7 @@ module SellerService
 
     def attributes(seller)
       profile = seller&.last_profile_version
-      version = seller&.last_version
+      version = seller&.last_version_with_schemes
       if seller
         full_sanitize_recursive({
           id: seller.id,
@@ -28,7 +28,11 @@ module SellerService
           lastProfileEditedBy: profile&.edited_by&.full_name,
           lastAccountUpdate: version&.updated_at&.strftime("%d %B %Y"),
           lastAccountEditedBy: version&.edited_by&.full_name,
-          schemes_and_panels: version&.schemes&.current&.uniq&.map(&:serialized),
+          schemes_and_panels: version&.panel_vendors&.select{|p|
+            p.scheme.current?
+          }.map{|p|
+            p.scheme&.serialized&.merge({owned_by: p.email})
+          },
           capabilities: version&.capabilities&.current&.uniq&.map(&:serialized),
         })
       end

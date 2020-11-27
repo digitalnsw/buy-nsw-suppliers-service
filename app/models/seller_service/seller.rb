@@ -15,6 +15,9 @@ module SellerService
     has_one  :last_profile_version, -> { where(next_version_id: nil) }, class_name: 'SellerService::SellerProfileVersion', inverse_of: :seller
 
     has_one :last_version, -> { where(next_version_id: nil) }, class_name: 'SellerService::SellerVersion'
+    has_one :last_version_with_schemes, -> {
+      preload(panel_vendors: :scheme).where(next_version_id: nil)
+    }, class_name: 'SellerService::SellerVersion'
 
     has_one :last_edited_by, through: :last_version, source: :edited_by, inverse_of: :seller
     has_many :seller_field_statuses, class_name: "SellerService::SellerFieldStatus", dependent: :destroy, inverse_of: :seller

@@ -35,8 +35,14 @@ module SellerService
             name: field.humanize,
           }
         },
-        schemes_and_panels: version.schemes.current.uniq.map(&:serialized),
-        capabilities: version.capabilities.current.uniq.map(&:serialized),
+        schemes_and_panels: version&.panel_vendors&.select{|p|
+          p.scheme.current?
+        }.map{|p|
+          p.scheme&.serialized&.merge({
+            panel_vendor_uuid: p.uuid
+          })
+        },
+        capabilities: version&.capabilities&.current&.uniq&.map(&:serialized),
       }.merge(full_sanitize_recursive version.attributes.slice(
         "name",
         "abn",

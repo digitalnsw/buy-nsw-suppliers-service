@@ -7,6 +7,7 @@ module SellerService
       {
         id: self.id,
         title: self.title,
+        panel_vendor_uuid: fields && fields['PanelVendorUUID'],
       }
     end
 

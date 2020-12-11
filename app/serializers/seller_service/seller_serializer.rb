@@ -31,7 +31,10 @@ module SellerService
           schemes_and_panels: version&.panel_vendors&.select{|p|
             p.scheme.current?
           }.map{|p|
-            p.scheme&.serialized&.merge({owned_by: p.email})
+            p.scheme&.serialized&.merge({
+              owned_by: p.email,
+              panel_vendor_uuid: p.uuid
+            })
           },
           capabilities: version&.capabilities&.current&.uniq&.map(&:serialized),
         })

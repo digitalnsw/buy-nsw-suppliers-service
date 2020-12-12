@@ -65,6 +65,7 @@ module SellerService
           address[field] = '' if address[field].nil?
         end
         address['state'] = 'outside_au' if address['country'].upcase != 'AU'
+        address['state'] = '' if address['country'].upcase == 'AU' && address['state'] == 'outside_au'
       end
       country = addresses.present? && addresses.first['country'].upcase
       self.regional = false unless postcode_in_regional_range && country == 'AU'

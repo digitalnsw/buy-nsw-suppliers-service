@@ -578,6 +578,7 @@ module SellerService
 
     def normalise_abn
       self.abn = ABN.new(abn).to_s if ABN.valid?(abn)
+      self.abn_strip = abn&.gsub(' ', '')
     end
 
     def is_latest?

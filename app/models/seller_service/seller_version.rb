@@ -13,6 +13,7 @@ module SellerService
       name: 'A',
       flagship_product: 'B',
       abn: 'C',
+      abn_strip: 'C',
       summary: 'D',
     }, using: { tsearch: { prefix: true } }
 
@@ -20,7 +21,8 @@ module SellerService
       name: 'A',
       contact_first_name: 'B',
       contact_last_name: 'B',
-      abn: 'C'
+      abn: 'C',
+      abn_strip: 'C',
     }, using: { tsearch: { prefix: true } }
 
     pg_search_scope :search_by_business_name, against: :name,

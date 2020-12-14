@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_17_115704) do
+ActiveRecord::Schema.define(version: 2020_12_14_010055) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -534,6 +534,7 @@ ActiveRecord::Schema.define(version: 2020_11_17_115704) do
     t.string "contact_position"
     t.string "abn_exempt", default: "non-exempt"
     t.string "abn_exempt_reason"
+    t.string "abn_strip"
     t.index ["abn"], name: "index_seller_versions_on_abn"
     t.index ["discarded_at"], name: "index_seller_versions_on_discarded_at"
     t.index ["edited_by_id"], name: "index_seller_versions_on_edited_by_id"
@@ -640,10 +641,12 @@ ActiveRecord::Schema.define(version: 2020_11_17_115704) do
     t.boolean "suspended", default: false
     t.boolean "opted_out", default: false
     t.json "permissions", default: {}, null: false
+    t.boolean "sync_pending", default: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["sync_pending"], name: "index_users_on_sync_pending"
     t.index ["uuid"], name: "index_users_on_uuid"
   end
 

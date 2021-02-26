@@ -17,19 +17,29 @@ module SellerService
 				cert_data = JSON.parse(response.to_str)
 
 				cert_data['items'].each do |item|
-					if item['valid']
+				if item['valid']
 						s = SupplierCertificate.find_by(supplier_abn: item['abn'], certification_id: abo_cert.id)
 						if s == nil
-			        s = SupplierCertificate.new
-				      s.supplier_abn = item['abn']
-				      s.certification_id = abo_cert.id
-				      s.save
+		        	s = SupplierCertificate.new
+							s.supplier_abn = formatted_abn(item['abn'])
+							s.certification_id = abo_cert.id
+							s.save
 				    end
 		      else
 		       SupplierCertificate.where(supplier_abn: item['abn'], certification_id: abo_cert.id).destroy_all
 		      end
 		  	end
 		  end
+	  end
+
+	  def self.formatted_abn(abn)
+	    abn = (abn || '').gsub(' ', '')
+
+	    abn = abn.insert(2, ' ') if abn.length > 2
+	    abn = abn.insert(6, ' ') if abn.length > 6
+	    abn = abn.insert(10, ' ') if abn.length > 10
+
+	    abn
 	  end
 
   end

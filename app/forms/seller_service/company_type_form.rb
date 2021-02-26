@@ -46,7 +46,7 @@ module SellerService
     def indigenous_certified
       cert = SellerService::Certification.find_by(cert_display: 'Aboriginal')
       if cert.present?
-        SellerService::SupplierCertificate.find_by(supplier_abn: abn.delete(' '), certification_id: cert.id).present?
+        SellerService::SupplierCertificate.find_by(supplier_abn: abn, certification_id: cert.id).present?
       else
         cert.present?
       end

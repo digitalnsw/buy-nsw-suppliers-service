@@ -9,18 +9,25 @@ module SellerService
 
     def attributes(version)
       profile = version.last_profile_version
+      cert = SellerService::Certification.find_by(cert_display: 'Aboriginal')
       result = {
         id: version.seller_id,
         tags: {
           regional: 'Regional',
           start_up: 'Startup',
           sme: 'SME',
-          indigenous: 'Aboriginal',
           not_for_profit: 'Not for profit',
           disability: 'Disability',
           australian_owned: 'Australian owned',
           govdc: 'GovDC',
-        }.map{ |key, value| version.send(key) ? value : nil }.compact,
+          indigenous_verified: 'Aboriginal'
+        }.map{ |key, value| 
+          if key.equal? :indigenous_verified
+            version&.supplier_certificates&.where(certification_id: cert.id).count > 0 ? value : nil
+          else
+            version.send(key) ? value : nil 
+          end
+        }.compact,
         level_1_services: version.level_1_services,
         level_2_services: version.level_2_services,
         level_3_services: version.level_3_services,

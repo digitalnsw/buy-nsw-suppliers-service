@@ -17,7 +17,7 @@ module SellerService
 
     def scoped_seller_versions
       SellerService::SellerVersion.approved.
-        includes(:last_profile_version).preload(:schemes, :capabilities).yield_self do |rel|
+        includes(:last_profile_version).preload(:schemes, :capabilities, :supplier_certificates).yield_self do |rel|
         [
           :category,
           :services,
@@ -84,7 +84,7 @@ module SellerService
     def filters
       {
         services: category_services,
-        identifiers: [ "start_up", "disability", "indigenous", "not_for_profit", "regional", "sme", "australian_owned" ],
+        identifiers: [ "start_up", "disability", "not_for_profit", "regional", "sme", "australian_owned", "indigenous_verified" ],
         locations: [ "nsw", "au", "nz", "int" ],
         company_size: [ "1to19", "20to49", "50to99", "200plus" ],
         profile: [ "case-studies", "references", "government-projects" ],

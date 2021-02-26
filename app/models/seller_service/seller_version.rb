@@ -62,6 +62,7 @@ module SellerService
     has_many :capabilities, class_name: 'SellerService::VendorCapability', foreign_key: 'abn', primary_key: 'abn'
     has_many :panel_vendors, class_name: 'SellerService::PanelVendor', foreign_key: 'abn', primary_key: 'abn'
     has_many :schemes, class_name: 'SellerService::SupplierScheme', through: :panel_vendors
+    has_many :supplier_certificates, class_name: 'SellerService::SupplierCertificate', foreign_key: 'supplier_abn', primary_key: 'abn'
 
     validates :started_at, presence: true
 
@@ -648,6 +649,7 @@ module SellerService
 
     def self.with_identifiers(identifiers)
       return all if identifiers.blank?
+      cert = SellerService::Certification.find_by(cert_display: 'Aboriginal')
       scope_sqls = {
         "start_up" => "start_up = true",
         "disability" => "disability = true",
@@ -657,9 +659,10 @@ module SellerService
         "sme" => "sme = true",
         "govdc" => "govdc = true",
         "australian_owned" => "australian_owned = true",
+        "indigenous_verified" => "supplier_certificates.certification_id = " + cert.id.to_s
       }
       sql = identifiers.map{|i| scope_sqls[i]}.join(' or ')
-      where("(#{sql})")
+      eager_load(:supplier_certificates).where("(#{sql})")
     end 
 
     def self.with_locations(locations)

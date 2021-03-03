@@ -191,6 +191,7 @@ module SellerService
 
     scope :disability,        ->            { where(disability: true) }
     scope :indigenous,        ->            { where(indigenous: true) }
+    scope :indigenous_optout, ->            { where(indigenous_optout: true) }
     scope :not_for_profit,    ->            { where(not_for_profit: true) }
     scope :regional,          ->            { where(regional: true) }
     scope :sme,               ->            { where(sme: true) }
@@ -659,7 +660,7 @@ module SellerService
         "sme" => "sme = true",
         "govdc" => "govdc = true",
         "australian_owned" => "australian_owned = true",
-        "indigenous_verified" => "supplier_certificates.certification_id = " + cert.id.to_s
+        "indigenous_verified" => "supplier_certificates.certification_id = " + cert.id.to_s + " and (indigenous_optout is null OR indigenous_optout = false)"
       }
       sql = identifiers.map{|i| scope_sqls[i]}.join(' or ')
       eager_load(:supplier_certificates).where("(#{sql})")

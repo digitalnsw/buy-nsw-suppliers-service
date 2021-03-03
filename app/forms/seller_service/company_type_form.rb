@@ -9,8 +9,8 @@ module SellerService
     field :sme
     field :not_for_profit
     field :australian_owned
-    field :indigenous
     field :disability
+    field :indigenous_optout
 
     field :addresses, usage: :back_end
     field :establishment_date, usage: :back_end
@@ -32,7 +32,6 @@ module SellerService
         :sme,
         :not_for_profit,
         :australian_owned,
-        :indigenous,
         :disability,
       ].any? do |field|
         send(field).present?

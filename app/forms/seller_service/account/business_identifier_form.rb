@@ -4,8 +4,8 @@ module SellerService::Account
     field :sme
     field :not_for_profit
     field :australian_owned
-    field :indigenous
     field :disability
+    field :indigenous_optout
 
     field :addresses, usage: :back_end
     field :establishment_date, usage: :back_end

@@ -23,7 +23,9 @@ module SellerService
           indigenous_verified: 'Aboriginal'
         }.map{ |key, value| 
           if key.equal? :indigenous_verified
-            version&.supplier_certificates&.where(certification_id: cert.id).count > 0 ? value : nil
+            unless version.indigenous_optout.present?
+              version&.supplier_certificates&.where(certification_id: cert.id).count > 0 ? value : nil
+            end
           else
             version.send(key) ? value : nil 
           end

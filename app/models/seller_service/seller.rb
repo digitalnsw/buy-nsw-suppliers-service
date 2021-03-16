@@ -376,6 +376,7 @@ module SellerService
         :regional,
         :indigenous,
         :disability,
+        :indigenous_optout,
         # :corporate_structure,
         :business_structure,
         :services,

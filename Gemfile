@@ -9,6 +9,7 @@ group :test do
   gem 'shared_libraries', git: 'https://github.com/digitalnsw/buy-nsw-shared-libraries', tag: 'v72'
 
   gem 'abn'
+  gem 'rest-client'
   gem 'aasm'
   gem 'carrierwave', '~> 1.0'
   gem 'clamby'

@@ -9,7 +9,7 @@ module SellerService
 
     def attributes(version)
       profile = version.last_profile_version
-      cert = SellerService::Certification.find_by(cert_display: 'Aboriginal').first_or_create()
+      cert = SellerService::Certification.find_by(cert_display: 'Aboriginal')
       result = {
         id: version.seller_id,
         tags: {
@@ -23,7 +23,7 @@ module SellerService
           indigenous_verified: 'Aboriginal'
         }.map{ |key, value| 
           if key.equal? :indigenous_verified
-            if version.send(:indigenous_optout).present?
+            if version.send(:indigenous_optout).present? || !cert.present?
               nil
             else
               version&.supplier_certificates&.where(certification_id: cert.id).count > 0 ? value : nil

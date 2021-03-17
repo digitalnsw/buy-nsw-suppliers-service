@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_14_010055) do
+ActiveRecord::Schema.define(version: 2021_02_28_110246) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -58,6 +58,13 @@ ActiveRecord::Schema.define(version: 2020_12_14_010055) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_buyer_emails_on_email", unique: true
+  end
+
+  create_table "certifications", force: :cascade do |t|
+    t.string "cert_display"
+    t.datetime "update_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "data_migrations", id: false, force: :cascade do |t|
@@ -150,7 +157,7 @@ ActiveRecord::Schema.define(version: 2020_12_14_010055) do
 
   create_table "panel_vendors", force: :cascade do |t|
     t.string "uuid"
-    t.json "fields"
+    t.json "fields", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "email", null: false
@@ -380,7 +387,7 @@ ActiveRecord::Schema.define(version: 2020_12_14_010055) do
 
   create_table "registered_users", force: :cascade do |t|
     t.string "uuid"
-    t.json "fields"
+    t.json "fields", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "email"
@@ -496,10 +503,10 @@ ActiveRecord::Schema.define(version: 2020_12_14_010055) do
     t.datetime "discarded_at"
     t.integer "previous_version_id"
     t.boolean "financial_statement_agree"
-    t.integer "edited_by_id"
     t.datetime "created_on"
     t.datetime "updated_on"
     t.bigint "next_version_id"
+    t.integer "edited_by_id"
     t.text "workers_compensation_nonexempt_details"
     t.integer "submitted_by_id"
     t.integer "decided_by_id"
@@ -535,6 +542,7 @@ ActiveRecord::Schema.define(version: 2020_12_14_010055) do
     t.string "abn_exempt", default: "non-exempt"
     t.string "abn_exempt_reason"
     t.string "abn_strip"
+    t.boolean "indigenous_optout"
     t.index ["abn"], name: "index_seller_versions_on_abn"
     t.index ["discarded_at"], name: "index_seller_versions_on_discarded_at"
     t.index ["edited_by_id"], name: "index_seller_versions_on_edited_by_id"
@@ -554,11 +562,20 @@ ActiveRecord::Schema.define(version: 2020_12_14_010055) do
     t.index ["uuid"], name: "index_sellers_on_uuid"
   end
 
+  create_table "supplier_certificates", force: :cascade do |t|
+    t.bigint "certification_id"
+    t.string "supplier_abn"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["certification_id"], name: "index_supplier_certificates_on_certification_id"
+    t.index ["supplier_abn"], name: "index_supplier_certificates_on_supplier_abn"
+  end
+
   create_table "supplier_schemes", force: :cascade do |t|
     t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "scheme_id", null: false
+    t.string "scheme_id"
     t.string "category"
     t.datetime "start_date"
     t.datetime "end_date"
@@ -637,7 +654,7 @@ ActiveRecord::Schema.define(version: 2020_12_14_010055) do
     t.string "full_name"
     t.string "uuid"
     t.boolean "has_password", default: false
-    t.integer "seller_ids", default: [], array: true
+    t.integer "seller_ids", default: [], null: false, array: true
     t.boolean "suspended", default: false
     t.boolean "opted_out", default: false
     t.json "permissions", default: {}, null: false
@@ -702,4 +719,5 @@ ActiveRecord::Schema.define(version: 2020_12_14_010055) do
   add_foreign_key "seller_versions", "seller_versions", column: "next_version_id"
   add_foreign_key "seller_versions", "sellers"
   add_foreign_key "seller_versions", "users", column: "edited_by_id"
+  add_foreign_key "supplier_certificates", "certifications"
 end

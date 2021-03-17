@@ -649,7 +649,6 @@ module SellerService
     end
 
     def self.with_identifiers(identifiers)
-      puts(identifiers)
       return all if identifiers.blank?
       cert = SellerService::Certification.find_by(cert_display: 'Aboriginal')
       scope_sqls = {

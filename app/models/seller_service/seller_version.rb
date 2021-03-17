@@ -649,6 +649,7 @@ module SellerService
     end
 
     def self.with_identifiers(identifiers)
+      puts(identifiers)
       return all if identifiers.blank?
       cert = SellerService::Certification.find_by(cert_display: 'Aboriginal')
       scope_sqls = {
@@ -660,8 +661,12 @@ module SellerService
         "sme" => "sme = true",
         "govdc" => "govdc = true",
         "australian_owned" => "australian_owned = true",
-        "indigenous_verified" => ("supplier_certificates.certification_id = " + cert.id.to_s + " and (indigenous_optout is null OR indigenous_optout = false)" if cert.present?) 
-      }.compact
+      }
+      if cert.present?
+        scope_sqls["indigenous_verified"] = "supplier_certificates.certification_id = " + cert.id.to_s + " and (indigenous_optout is null OR indigenous_optout = false)"
+      else 
+        scope_sqls["indigenous_verified"] = "supplier_certificates.certification_id = " + 0.to_s + " and (indigenous_optout is null OR indigenous_optout = false)"
+      end
       sql = identifiers.map{|i| scope_sqls[i]}.join(' or ')
       eager_load(:supplier_certificates).where("(#{sql})")
     end 

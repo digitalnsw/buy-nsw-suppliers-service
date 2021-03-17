@@ -9,7 +9,7 @@ module SellerService
 
     def attributes(version)
       profile = version.last_profile_version
-      cert = SellerService::Certification.find_by(cert_display: 'Aboriginal')
+      cert = SellerService::Certification.find_by(cert_display: 'Aboriginal').first_or_create()
       result = {
         id: version.seller_id,
         tags: {

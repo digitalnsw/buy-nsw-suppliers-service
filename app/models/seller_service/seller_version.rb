@@ -650,7 +650,7 @@ module SellerService
 
     def self.with_identifiers(identifiers)
       return all if identifiers.blank?
-      cert = SellerService::Certification.find_by(cert_display: 'Aboriginal')
+      cert = SellerService::Certification.find_by(cert_display: 'Aboriginal').first_or_create()
       scope_sqls = {
         "start_up" => "start_up = true",
         "disability" => "disability = true",

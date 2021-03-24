@@ -121,7 +121,7 @@ en:
         start_up:
           name: 'Start-up'
         not_for_profit:
-          name: 'Not for profit/social enterprise'
+          name: 'Not for profit'
         australian_owned:
           name: 'Australian owned'
         regional:

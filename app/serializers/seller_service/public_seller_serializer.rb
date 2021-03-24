@@ -9,7 +9,9 @@ module SellerService
 
     def attributes(version)
       profile = version.last_profile_version
-      cert = SellerService::Certification.find_by(cert_display: 'Aboriginal')
+      cert_disability = SellerService::Certification.find_by(cert_display: 'Disability')
+      cert_indigenous = SellerService::Certification.find_by(cert_display: 'Aboriginal')
+      cert_social_enterprise = SellerService::Certification.find_by(cert_display: 'Social')
       result = {
         id: version.seller_id,
         tags: {
@@ -17,17 +19,31 @@ module SellerService
           start_up: 'Startup',
           sme: 'SME',
           not_for_profit: 'Not for profit',
-          disability: 'Disability',
+          # disability: 'Disability',
           australian_owned: 'Australian owned',
           govdc: 'GovDC',
-          indigenous_verified: 'Aboriginal'
+          disability_verified: 'Disability',
+          indigenous_verified: 'Aboriginal',
+          social_enterprise_verified: 'Social enterprise'
         }.map{ |key, value| 
-          if key.equal? :indigenous_verified
-            if version.send(:indigenous_optout).present? || !cert.present?
+          if key.equal? :disability_verified
+            if version.send(:disability_optout).present? || !cert_disability.present?
               nil
             else
-              version&.supplier_certificates&.where(certification_id: cert.id).count > 0 ? value : nil
+              version&.supplier_certificates&.where(certification_id: cert_disability.id).count > 0 ? value : nil
             end
+          elsif key.equal? :indigenous_verified
+            if version.send(:indigenous_optout).present? || !cert_indigenous.present?
+              nil
+            else
+              version&.supplier_certificates&.where(certification_id: cert_indigenous.id).count > 0 ? value : nil
+            end  
+          elsif key.equal? :social_enterprise_verified
+            if version.send(:social_enterprise_optout).present? || !cert_social_enterprise.present?
+              nil
+            else
+              version&.supplier_certificates&.where(certification_id: cert_social_enterprise.id).count > 0 ? value : nil
+            end  
           else
             version.send(key) ? value : nil 
           end

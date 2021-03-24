@@ -244,8 +244,8 @@ en:
             label: 'Small to medium-sized enterprise (SME)'
             hint: To be classified as an SME your business must have less than 200 full-time equivalent employees and be from Australia or New Zealand.
           not_for_profit:
-            label: 'Not for profit/social enterprise'
-            hint: To be classified as a not for profit or social enterprise business, the purpose of your business must be to improve human or environmental wellbeing and to reinvest profits to fulfil this mission.
+            label: 'Not for profit'
+            hint: To be classified as a not for profit, the purpose of your business must be to improve human or environmental wellbeing and to reinvest profits to fulfil this mission.
           australian_owned:
             label: 'Australian owned'
             hint: To be classified as Australian owned your business must have been founded and is headquartered in Australia; and owned by Australian nationals.
@@ -359,7 +359,7 @@ en:
           options:
             disability: Australian disability enterprise
             indigenous: Aboriginal or Torres Strait Islander
-            not_for_profit: Not for profit/social enterprise
+            not_for_profit: Not for profit
             regional: Regional
             sme: SME
             start_up: Start-up

@@ -190,11 +190,13 @@ module SellerService
     scope :not_stale,         ->            { where("updated_on > ?", 8.weeks.ago) }
 
     scope :disability,        ->            { where(disability: true) }
+    scope :disability_optout, ->            { where(disability_optout: true) }
     scope :indigenous,        ->            { where(indigenous: true) }
     scope :indigenous_optout, ->            { where(indigenous_optout: true) }
     scope :not_for_profit,    ->            { where(not_for_profit: true) }
     scope :regional,          ->            { where(regional: true) }
     scope :sme,               ->            { where(sme: true) }
+    scope :social_enterprise_optout, ->     { where(social_enterprise_optout: true) }
     scope :start_up,          ->            { where(start_up: true) }
 
     enumerize :abn_exempt, in: [
@@ -650,24 +652,41 @@ module SellerService
 
     def self.with_identifiers(identifiers)
       return all if identifiers.blank?
-      cert = SellerService::Certification.find_by(cert_display: 'Aboriginal')
+      cert_disability = SellerService::Certification.find_by(cert_display: 'Disability')
+      cert_indigenous = SellerService::Certification.find_by(cert_display: 'Aboriginal')
+      cert_social_enterprise = SellerService::Certification.find_by(cert_display: 'Social')
       scope_sqls = {
         "start_up" => "start_up = true",
-        "disability" => "disability = true",
-        "indigenous" => "indigenous = true",
+        # "disability" => "disability = true",
+        # "indigenous" => "indigenous = true",
         "not_for_profit" => "not_for_profit = true",
         "regional" => "regional = true",
         "sme" => "sme = true",
         "govdc" => "govdc = true",
         "australian_owned" => "australian_owned = true",
       }
-      if cert.present?
-        scope_sqls["indigenous_verified"] = "supplier_certificates.certification_id = " + cert.id.to_s + " and (indigenous_optout is null OR indigenous_optout = false)"
+      if cert_disability.present?
+        scope_sqls["disability_verified"] = "supplier_certificates.certification_id = " + cert_disability.id.to_s + " and (disability_optout is null OR disability_optout = false)"
+      else 
+        scope_sqls["disability_verified"] = "supplier_certificates.certification_id = " + 0.to_s + " and (disability_optout is null OR disability_optout = false)"
+      end
+      if cert_indigenous.present?
+        scope_sqls["indigenous_verified"] = "supplier_certificates.certification_id = " + cert_indigenous.id.to_s + " and (indigenous_optout is null OR indigenous_optout = false)"
       else 
         scope_sqls["indigenous_verified"] = "supplier_certificates.certification_id = " + 0.to_s + " and (indigenous_optout is null OR indigenous_optout = false)"
       end
+      if cert_social_enterprise.present?
+        scope_sqls["social_enterprise_verified"] = "supplier_certificates.certification_id = " + cert_social_enterprise.id.to_s + " and (social_enterprise_optout is null OR social_enterprise_optout = false)"
+      else 
+        scope_sqls["social_enterprise_verified"] = "supplier_certificates.certification_id = " + 0.to_s + " and (social_enterprise_optout is null OR social_enterprise_optout = false)"
+      end
       sql = identifiers.map{|i| scope_sqls[i]}.join(' or ')
-      eager_load(:supplier_certificates).where("(#{sql})")
+      if sql.blank?
+        eager_load(:supplier_certificates)
+      else
+        eager_load(:supplier_certificates).where("(#{sql})")
+      end
+
     end 
 
     def self.with_locations(locations)

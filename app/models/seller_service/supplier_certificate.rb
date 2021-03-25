@@ -6,9 +6,11 @@ module SellerService
     self.table_name = 'supplier_certificates'
 
     def self.save_data_from_api
+      
+      import_date = Time.now
+      abo_cert = Certification.where(:cert_display => 'Aboriginal').first_or_create()
 
-    	if ENV["SUPPLYNATION_URL"].present?
-		  	abo_cert = Certification.where(:cert_display => 'Aboriginal').first_or_create()
+      if ENV["SUPPLYNATION_URL"].present?
 
 		  	auth_response = RestClient.post(ENV['SUPPLYNATION_URL'].to_s + '/oauth2/token',{ grant_type: 'password', client_id: ENV['SUPPLYNATION_CLIENT_ID'].to_s, client_secret: ENV['SUPPLYNATION_CLIENT_SECRET'].to_s, username: ENV['SUPPLYNATION_USERNAME'].to_s, password: ENV['SUPPLYNATION_PASSWORD'].to_s }, { content_type: 'application/x-www-form-urlencoded', accept: 'application/json'})
 		  	auth_result = JSON.parse(auth_response.to_str)
@@ -21,7 +23,6 @@ module SellerService
           modified_After = 1.year.ago.utc.strftime('%Y-%m-%dT%H:%M:%S.%LZ')
         end
 
-        import_date = Time.now
 
         loop do
           response = RestClient.get(ENV['SUPPLYNATION_URL'].to_s + '/apexrest/impact/public/v3/supplier?modifiedAfter=' + URI::encode(modified_After) + '&next=' + next_token, { Authorization: 'Bearer ' + auth_result['access_token'] })

@@ -1,5 +1,6 @@
 require 'rest-client'
 require 'json'
+require 'csv'
 
 module SellerService
   class SupplierCertificate < SellerService::ApplicationRecord
@@ -54,6 +55,58 @@ module SellerService
 
 		  end
 	  end
+
+    def self.import_ade_csv
+
+      import_date = Time.now
+      ade_cert = Certification.where(:cert_display => 'Disability').first_or_create()
+
+      # import CSV data
+      csv_path = Rails.root.join('csv', 'ade-certified.csv').to_s
+      table = CSV.parse(File.read(csv_path), headers: true)
+      
+      table.each do |row|
+        s = SupplierCertificate.find_by(supplier_abn: row['abn'], certification_id: ade_cert.id)
+        if s == nil
+          s = SupplierCertificate.new
+          s.supplier_abn = formatted_abn(row['abn'])
+          s.certification_id = ade_cert.id
+          s.created_at = import_date
+          s.updated_at = import_date
+          s.save
+        end
+      end
+
+      # clean up old data
+      SupplierCertificate.where("certification_id = ? AND created_at < ?", ade_cert.id, import_date).destroy_all
+
+    end
+
+    def self.import_social_csv
+
+      import_date = Time.now
+      social_cert = Certification.where(:cert_display => 'Social').first_or_create()
+
+      # import CSV data
+      csv_path = Rails.root.join('csv', 'social-certified.csv').to_s
+      table = CSV.parse(File.read(csv_path), headers: true)
+      
+      table.each do |row|
+        s = SupplierCertificate.find_by(supplier_abn: row['abn'], certification_id: social_cert.id)
+        if s == nil
+          s = SupplierCertificate.new
+          s.supplier_abn = formatted_abn(row['abn'])
+          s.certification_id = social_cert.id
+          s.created_at = import_date
+          s.updated_at = import_date
+          s.save
+        end
+      end
+
+      # clean up old data
+      SupplierCertificate.where("certification_id = ? AND created_at < ?", social_cert.id, import_date).destroy_all
+
+    end
 
 	  def self.formatted_abn(abn)
 	    abn = (abn || '').gsub(' ', '')

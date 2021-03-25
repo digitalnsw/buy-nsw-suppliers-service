@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_28_110246) do
+ActiveRecord::Schema.define(version: 2021_03_22_062043) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -119,9 +119,9 @@ ActiveRecord::Schema.define(version: 2021_02_28_110246) do
     t.integer "user_id"
     t.string "category"
     t.text "note"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.datetime "discarded_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.index ["discarded_at"], name: "index_event_service_events_on_discarded_at"
   end
 
@@ -148,6 +148,7 @@ ActiveRecord::Schema.define(version: 2021_02_28_110246) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "seen"
+    t.datetime "token_expiry"
     t.string "token"
     t.datetime "expiry", null: false
     t.integer "recipients", default: [], array: true
@@ -543,6 +544,8 @@ ActiveRecord::Schema.define(version: 2021_02_28_110246) do
     t.string "abn_exempt_reason"
     t.string "abn_strip"
     t.boolean "indigenous_optout"
+    t.boolean "social_enterprise_optout"
+    t.boolean "disability_optout"
     t.index ["abn"], name: "index_seller_versions_on_abn"
     t.index ["discarded_at"], name: "index_seller_versions_on_discarded_at"
     t.index ["edited_by_id"], name: "index_seller_versions_on_edited_by_id"
@@ -657,7 +660,7 @@ ActiveRecord::Schema.define(version: 2021_02_28_110246) do
     t.integer "seller_ids", default: [], null: false, array: true
     t.boolean "suspended", default: false
     t.boolean "opted_out", default: false
-    t.json "permissions", default: {}, null: false
+    t.json "permissions", default: {}
     t.boolean "sync_pending", default: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["discarded_at"], name: "index_users_on_discarded_at"

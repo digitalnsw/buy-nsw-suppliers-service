@@ -657,7 +657,7 @@ module SellerService
       cert_social_enterprise = SellerService::Certification.find_by(cert_display: 'Social')
       scope_sqls = {
         "start_up" => "start_up = true",
-        # "disability" => "disability = true",
+        "disability" => "disability = true",
         # "indigenous" => "indigenous = true",
         "not_for_profit" => "not_for_profit = true",
         "regional" => "regional = true",

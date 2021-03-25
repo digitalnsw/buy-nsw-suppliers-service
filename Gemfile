@@ -31,4 +31,7 @@ group :test do
   gem 'rspec-rails', '~> 3.7'
   gem 'simplecov'
   gem 'airbrake', '~> 9.5'
+
+  gem 'mimemagic', '~> 0.3.6'
+
 end

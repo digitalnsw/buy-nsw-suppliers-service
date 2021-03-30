@@ -23,7 +23,8 @@ module SellerService
           australian_owned: 'Australian owned',
           govdc: 'GovDC',
           disability_verified: 'Disability',
-          indigenous_verified: 'Aboriginal',
+          indigenous: 'Aboriginal',
+          indigenous_verified: 'Aboriginal Verified',
           social_enterprise_verified: 'Social enterprise'
         }.map{ |key, value| 
           if key.equal? :disability_verified
@@ -33,7 +34,7 @@ module SellerService
               version&.supplier_certificates&.where(certification_id: cert_disability.id).count > 0 ? value : nil
             end
           elsif key.equal? :indigenous_verified
-            if version.send(:indigenous_optout).present? || !cert_indigenous.present?
+            if !cert_indigenous.present?
               nil
             else
               version&.supplier_certificates&.where(certification_id: cert_indigenous.id).count > 0 ? value : nil
@@ -80,6 +81,12 @@ module SellerService
         website_url: profile&.website_url,
         summary: profile&.summary,
       }))
+
+      # remove 'Aboriginal' from tags if 'Aboriginal Verified' is set
+      result[:tags].delete('Aboriginal') if result[:tags].include?('Aboriginal Verified')
+      # remove 'Aboriginal Verified' from tags if indigenous_optout is set
+      result[:tags].delete('Aboriginal Verified') if version.send(:indigenous_optout).present?
+
       if @buyer_view
         result.merge!(full_sanitize_recursive version.attributes.slice(
           "contact_first_name",

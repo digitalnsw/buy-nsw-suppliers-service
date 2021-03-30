@@ -6,6 +6,7 @@ module SellerService::Account
     field :australian_owned
     field :disability
     field :disability_optout
+    field :indigenous
     field :indigenous_optout
     field :social_enterprise_optout
 

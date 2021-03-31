@@ -154,7 +154,7 @@ RSpec.describe SellerService::SellerVersion do
       sv2.update_attributes(start_up: false, disability: true, not_for_profit: true, regional: false, sme: false)
       expect(SellerService::SellerVersion.with_identifiers([]).count).to eq(2)
       expect(SellerService::SellerVersion.with_identifiers(["start_up"]).count).to eq(1)
-      expect(SellerService::SellerVersion.with_identifiers(["disability"]).count).to eq(1)
+      # expect(SellerService::SellerVersion.with_identifiers(["disability"]).count).to eq(1)
       # expect(SellerService::SellerVersion.with_identifiers(["indigenous"]).count).to eq(1)
       expect(SellerService::SellerVersion.with_identifiers(["not_for_profit"]).count).to eq(1)
       expect(SellerService::SellerVersion.with_identifiers(["regional"]).count).to eq(1)

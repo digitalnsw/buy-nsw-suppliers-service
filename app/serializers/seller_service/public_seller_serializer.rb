@@ -19,7 +19,7 @@ module SellerService
           start_up: 'Startup',
           sme: 'SME',
           not_for_profit: 'Not for profit',
-          disability: 'Disability',
+          # disability: 'Disability',
           australian_owned: 'Australian owned',
           govdc: 'GovDC',
           disability_verified: 'Disability',

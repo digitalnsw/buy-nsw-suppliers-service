@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_22_062043) do
+ActiveRecord::Schema.define(version: 2021_04_06_053454) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -546,6 +546,7 @@ ActiveRecord::Schema.define(version: 2021_03_22_062043) do
     t.boolean "indigenous_optout"
     t.boolean "social_enterprise_optout"
     t.boolean "disability_optout"
+    t.boolean "social_enterprise"
     t.index ["abn"], name: "index_seller_versions_on_abn"
     t.index ["discarded_at"], name: "index_seller_versions_on_discarded_at"
     t.index ["edited_by_id"], name: "index_seller_versions_on_edited_by_id"

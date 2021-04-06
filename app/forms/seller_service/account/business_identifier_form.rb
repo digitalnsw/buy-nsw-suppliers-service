@@ -8,6 +8,7 @@ module SellerService::Account
     field :disability_optout
     field :indigenous
     field :indigenous_optout
+    field :social_enterprise
     field :social_enterprise_optout
 
     field :addresses, usage: :back_end

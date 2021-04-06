@@ -19,16 +19,17 @@ module SellerService
           start_up: 'Startup',
           sme: 'SME',
           not_for_profit: 'Not for profit',
-          # disability: 'Disability',
           australian_owned: 'Australian owned',
           govdc: 'GovDC',
-          disability_verified: 'Disability',
+          disability: 'Disability',
+          disability_verified: 'Disability Verified',
           indigenous: 'Aboriginal',
           indigenous_verified: 'Aboriginal Verified',
-          social_enterprise_verified: 'Social enterprise'
+          social_enterprise: 'Social enterprise',
+          social_enterprise_verified: 'Social enterprise Verified'
         }.map{ |key, value| 
           if key.equal? :disability_verified
-            if version.send(:disability_optout).present? || !cert_disability.present?
+            if !cert_disability.present?
               nil
             else
               version&.supplier_certificates&.where(certification_id: cert_disability.id).count > 0 ? value : nil
@@ -40,7 +41,7 @@ module SellerService
               version&.supplier_certificates&.where(certification_id: cert_indigenous.id).count > 0 ? value : nil
             end  
           elsif key.equal? :social_enterprise_verified
-            if version.send(:social_enterprise_optout).present? || !cert_social_enterprise.present?
+            if !cert_social_enterprise.present?
               nil
             else
               version&.supplier_certificates&.where(certification_id: cert_social_enterprise.id).count > 0 ? value : nil
@@ -86,6 +87,14 @@ module SellerService
       result[:tags].delete('Aboriginal') if result[:tags].include?('Aboriginal Verified')
       # remove 'Aboriginal Verified' from tags if indigenous_optout is set
       result[:tags].delete('Aboriginal Verified') if version.send(:indigenous_optout).present?
+      # remove 'Disability' from tags if 'Disability Verified' is set
+      result[:tags].delete('Disability') if result[:tags].include?('Disability Verified')
+      # remove 'Disability Verified' from tags if disability_optout is set
+      result[:tags].delete('Disability Verified') if version.send(:disability_optout).present?
+      # remove 'Social enterprise' from tags if 'Social enterprise Verified' is set
+      result[:tags].delete('Social enterprise') if result[:tags].include?('Social enterprise Verified')
+      # remove 'Social enterprise Verified' from tags if social_enterprise_optout is set
+      result[:tags].delete('Social enterprise Verified') if version.send(:social_enterprise_optout).present?
 
       if @buyer_view
         result.merge!(full_sanitize_recursive version.attributes.slice(

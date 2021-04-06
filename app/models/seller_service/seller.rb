@@ -378,6 +378,7 @@ module SellerService
         :disability_optout,
         :indigenous,
         :indigenous_optout,
+        :social_enterprise,
         :social_enterprise_optout,
         # :corporate_structure,
         :business_structure,

@@ -196,6 +196,7 @@ module SellerService
     scope :not_for_profit,    ->            { where(not_for_profit: true) }
     scope :regional,          ->            { where(regional: true) }
     scope :sme,               ->            { where(sme: true) }
+    scope :social_enterprise, ->            { where(social_enterprise: true) }
     scope :social_enterprise_optout, ->     { where(social_enterprise_optout: true) }
     scope :start_up,          ->            { where(start_up: true) }
 
